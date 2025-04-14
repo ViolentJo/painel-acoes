@@ -67,9 +67,12 @@
   <h1>📊 Painel Interativo de Ações</h1>
 
   <div class="quote-buttons">
-    <div class="quote-card" onclick="loadChart('EURONEXT:EDP', this)">
+    <!-- EDP: só cotação, sem onclick -->
+    <div class="quote-card" style="cursor: default;">
       <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=EURONEXT:EDP&locale=pt" width="200" height="100"></iframe>
     </div>
+
+    <!-- Restantes: cotação + onclick -->
     <div class="quote-card" onclick="loadChart('BATS:AIQ', this)">
       <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=BATS:AIQ&locale=pt" width="200" height="100"></iframe>
     </div>
@@ -93,7 +96,6 @@
       const container = document.getElementById('chart-frame');
       const title = document.getElementById('chart-title');
 
-      // Atualiza o gráfico
       container.innerHTML = `
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1" 
           width="100%" height="500"></iframe>
@@ -101,7 +103,6 @@
 
       title.innerText = `📈 Gráfico: ${symbol}`;
 
-      // Marca o botão ativo
       if (activeCard) activeCard.classList.remove('active');
       card.classList.add('active');
       activeCard = card;
