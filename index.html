@@ -88,6 +88,14 @@
       </tr>
     </thead>
     <tbody>
+      <!-- EDP com preço via Yahoo Finance -->
+      <tr>
+        <td><span class="symbol">EDP</span></td>
+        <td id="edp-price">A carregar...</td>
+        <td><span id="edp-variation">—</span></td>
+      </tr>
+
+      <!-- Restantes ações com TradingView -->
       <tr onclick="loadChart('BATS:AIQ')">
         <td><span class="symbol">AIQ</span></td>
         <td>€25.31</td>
@@ -102,13 +110,6 @@
         <td><span class="symbol">GNL</span></td>
         <td>€9.71</td>
         <td class="positive">+0.47%</td>
-      </tr>
-      <tr>
-        <td><span class="symbol">EDP</span></td>
-        <td>
-          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=EURONEXT:EDP&locale=pt" width="220" height="70"></iframe>
-        </td>
-        <td>—</td>
       </tr>
     </tbody>
   </table>
@@ -125,6 +126,29 @@
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
     }
+
+    // EDP via Yahoo Finance
+    async function fetchEDP() {
+      try {
+        const res = await fetch("https://query1.finance.yahoo.com/v7/finance/quote?symbols=EDP.LS");
+        const data = await res.json();
+        const quote = data.quoteResponse.result[0];
+
+        const price = quote.regularMarketPrice;
+        const changePercent = quote.regularMarketChangePercent.toFixed(2);
+        const variationClass = changePercent >= 0 ? "positive" : "negative";
+
+        document.getElementById("edp-price").textContent = `€${price.toFixed(2)}`;
+        document.getElementById("edp-variation").textContent = `${changePercent}%`;
+        document.getElementById("edp-variation").className = variationClass;
+      } catch (error) {
+        document.getElementById("edp-price").textContent = "Erro";
+        document.getElementById("edp-variation").textContent = "—";
+      }
+    }
+
+    fetchEDP();
+    setInterval(fetchEDP, 30000); // Atualiza a cada 30s
   </script>
 </body>
 </html>
