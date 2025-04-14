@@ -72,4 +72,59 @@
       width: 100%;
       height: 500px;
       border: none;
-      border-radius:
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Painel de Ações</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ação</th>
+        <th>Preço</th>
+        <th>Variação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr onclick="loadChart('BATS:AIQ')">
+        <td><span class="symbol">AIQ</span></td>
+        <td>€25.31</td>
+        <td class="positive">+1.24%</td>
+      </tr>
+      <tr onclick="loadChart('BATS:QTUM')">
+        <td><span class="symbol">QTUM</span></td>
+        <td>€18.92</td>
+        <td class="negative">-0.85%</td>
+      </tr>
+      <tr onclick="loadChart('NYSE:GNL')">
+        <td><span class="symbol">GNL</span></td>
+        <td>€9.71</td>
+        <td class="positive">+0.47%</td>
+      </tr>
+      <tr>
+        <td><span class="symbol">EDP</span></td>
+        <td>
+          <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=EURONEXT:EDP&locale=pt" width="220" height="70"></iframe>
+        </td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="chart-container">
+    <h2 id="chart-title">Seleciona uma ação para ver o gráfico</h2>
+    <div id="chart-frame"></div>
+  </div>
+
+  <script>
+    function loadChart(symbol) {
+      document.getElementById('chart-title').innerText = `📈 Gráfico: ${symbol}`;
+      document.getElementById('chart-frame').innerHTML = `
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+      `;
+    }
+  </script>
+</body>
+</html>
