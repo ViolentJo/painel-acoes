@@ -31,7 +31,7 @@
 
   <script>
     async function fetchAcoes() {
-      const res = await fetch('https://yahoo-finance-api-am3c.onrender.com/api/stocks');
+const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
       const data = await res.json();
       document.getElementById('acoes-realtime').innerHTML = data.map(a => `
         <div class='stock-card'>
