@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,9 +45,6 @@
     #portfolio-card {
       margin-bottom: 30px;
     }
-    .stock-card:hover {
-      background-color: #222;
-    }
     .symbol {
       font-size: 1.2rem;
       font-weight: bold;
@@ -55,15 +53,6 @@
     .price {
       font-size: 1.6rem;
       margin-bottom: 10px;
-    }
-    .variation {
-      margin-bottom: 10px;
-    }
-    .positive {
-      color: #4caf50;
-    }
-    .negative {
-      color: #f44336;
     }
     .chart-btn {
       background: #4caf50;
@@ -123,12 +112,14 @@
     };
 
     const dollarStocks = ["AIQ", "QTUM", "GNL"];
-    const usdToEurRate = 0.92; // TAXA FIXA
 
     async function fetchStocks() {
       try {
         const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
         const data = await res.json();
+
+        const eurUsd = data.find(s => s.symbol === "EURUSD=X")?.price;
+        const usdToEurRate = eurUsd ? 1 / eurUsd : 0.92;
 
         const container = document.getElementById("cards-container");
         container.innerHTML = "";
@@ -137,15 +128,15 @@
 
         data.forEach(stock => {
           const symbol = stock.symbol;
-          const name = symbol.replace(".LS", "");
+          if (symbol === "EURUSD=X") return; // ignorar este no display
+
+          const name = stock.shortName || symbol;
           const price = parseFloat(stock.price);
-          const priceStr = price.toFixed(2);
-          const variation = (Math.random() * 2 - 1).toFixed(2);
-          const variationClass = variation >= 0 ? "positive" : "negative";
           const titles = cardTitles[symbol] || 0;
           const total = titles * price;
           const isDollar = dollarStocks.includes(symbol);
           const currency = isDollar ? "$" : "€";
+
           if (isDollar) {
             totalUSD += total;
           } else {
@@ -154,6 +145,7 @@
 
           const card = document.createElement("div");
           card.className = "stock-card";
+
           const chartSymbol = tradingViewMap[symbol];
           const chartBtn = symbol === "EDP.LS"
             ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
@@ -161,8 +153,7 @@
 
           card.innerHTML = `
             <div class="symbol">${name}</div>
-            <div class="price">${currency}${priceStr}</div>
-            <div class="variation ${variationClass}">${variation}%</div>
+            <div class="price">${currency}${price.toFixed(2)}</div>
             <div>Títulos: ${titles.toLocaleString()}</div>
             <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
             ${chartBtn}
@@ -174,14 +165,14 @@
         const totalFinal = totalEUR + convertedUSD;
 
         document.getElementById("portfolio-total").innerHTML = `
-          <div>🇪🇺 EDP (EUR): €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>🇺🇸 AIQ, QTUM, GNL (USD): $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>💱 Convertido: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇪🇺 Total em EUR (EDP): €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇺🇸 Total em USD: $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>💱 Conversão USD→EUR (@${usdToEurRate.toFixed(4)}): €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <hr>
-          <strong>💶 Total EUR: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          <strong>💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
         `;
       } catch (err) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
       }
     }
 
