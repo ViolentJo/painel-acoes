@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações – Logotipos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>Painel de Ações</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #111;
@@ -15,14 +15,12 @@
       --negative: #f44336;
       --accent: #4caf50;
     }
-
     body.light {
       --bg: #f2f2f2;
       --card-bg: #ffffff;
       --card-hover: #f4f4f4;
       --text: #111;
     }
-
     body {
       background-color: var(--bg);
       color: var(--text);
@@ -31,12 +29,10 @@
       padding: 30px;
       transition: background-color 0.3s, color 0.3s;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 30px;
     }
-
     .theme-toggle {
       position: fixed;
       top: 20px;
@@ -50,19 +46,15 @@
       font-size: 0.9rem;
       transition: 0.3s;
     }
-
     .theme-toggle:hover {
       background: var(--card-hover);
     }
-
     .cards-container {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
-      animation: fadeIn 0.6s ease-in;
     }
-
     .stock-card {
       background-color: var(--card-bg);
       border: 1px solid #333;
@@ -73,44 +65,34 @@
       text-align: center;
       transition: transform 0.3s ease, background-color 0.3s;
     }
-
     .stock-card:hover {
       background-color: var(--card-hover);
       transform: translateY(-5px);
     }
-
-    .logo {
-      max-height: 60px;
-      max-width: 100px;
-      object-fit: contain;
-      margin-bottom: 12px;
-    }
-
     .symbol {
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 10px;
       display: block;
     }
-
     .price {
       font-size: 1.6rem;
       margin-bottom: 10px;
     }
-
     .variation {
       font-size: 1rem;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
-
     .positive {
       color: var(--positive);
     }
-
     .negative {
       color: var(--negative);
     }
-
+    .info-line {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
     .chart-btn {
       background-color: var(--accent);
       color: #fff;
@@ -119,55 +101,39 @@
       border-radius: 4px;
       display: inline-block;
       font-size: 0.9rem;
-      transition: 0.3s ease;
+      margin-top: 10px;
     }
-
-    .chart-btn:hover {
-      filter: brightness(1.1);
-    }
-
     #chart-container {
       max-width: 900px;
       margin: 40px auto 0;
       text-align: center;
       display: none;
-      animation: fadeIn 0.6s ease-in;
     }
-
     iframe {
       width: 100%;
       height: 500px;
       border: none;
       border-radius: 6px;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
   <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo Claro/Escuro</button>
-
   <h1>📊 Painel de Ações</h1>
 
-  <div class="cards-container" id="cards-container">
-    <!-- Cards gerados dinamicamente -->
-  </div>
+  <div class="cards-container" id="cards-container"></div>
 
-  <!-- Gráfico interativo -->
   <div id="chart-container">
     <h2 id="chart-title">📈 Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
 
   <script>
-    const logos = {
-      "EDP.LS": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/EDP_Logo.svg/600px-EDP_Logo.svg.png",
-      "BATS:AIQ": "https://seeklogo.com/images/G/global-x-etfs-logo-76F943BE2E-seeklogo.com.png",
-      "BATS:QTUM": "https://yt3.googleusercontent.com/ytc/AMLnZu9fInR0_xBL2vnh1T-mCy53V4D7KKjMd-R8iEm5mg=s900-c-k-c0x00ffffff-no-rj",
-      "NYSE:GNL": "https://www.globalnetlease.com/images/logo.png"
+    const cardTitles = {
+      "EDP.LS": 470500,
+      "BATS:AIQ": 4050,
+      "BATS:QTUM": 1990,
+      "NYSE:GNL": 28100
     };
 
     async function fetchStocks() {
@@ -181,30 +147,32 @@
         data.forEach(stock => {
           const symbol = stock.symbol;
           const name = symbol.replace("BATS:", "").replace("NYSE:", "").replace(".LS", "");
-          const price = stock.price.toFixed(2);
+          const price = parseFloat(stock.price).toFixed(2);
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
-          const logo = logos[symbol] || "";
+          const titles = cardTitles[symbol] || 0;
+          const total = (titles * price).toFixed(2);
 
           const card = document.createElement("div");
           card.className = "stock-card";
 
-          const chartButton = symbol === "EDP.LS"
+          const chartBtn = symbol === "EDP.LS"
             ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">Ver gráfico</a>`
             : `<a class="chart-btn" href="#" onclick="loadChart('${symbol}'); return false;">Ver gráfico</a>`;
 
           card.innerHTML = `
-            <img src="${logo}" class="logo" alt="Logo ${name}" />
             <span class="symbol">${name}</span>
             <div class="price">€${price}</div>
             <div class="variation ${variationClass}">${variation}%</div>
-            ${chartButton}
+            <div class="info-line">Títulos: ${titles.toLocaleString()}</div>
+            <div class="info-line"><strong>Total:</strong> €${parseFloat(total).toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            ${chartBtn}
           `;
 
           container.appendChild(card);
         });
-      } catch (error) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
+      } catch (err) {
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
       }
     }
 
