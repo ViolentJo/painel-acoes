@@ -29,6 +29,7 @@
     th, td {
       padding: 14px;
       text-align: left;
+      vertical-align: middle;
     }
 
     th {
@@ -74,6 +75,12 @@
       border: none;
       border-radius: 6px;
     }
+
+    img {
+      max-width: 220px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -88,9 +95,30 @@
       </tr>
     </thead>
     <tbody id="stocks-table">
+      <!-- Linha da EDP com imagem clicável -->
       <tr>
-        <td colspan="3">A carregar...</td>
+        <td>
+          <span class="symbol">EDP</span><br>
+          <a href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">
+            <img src="https://finviz.com/chart.ashx?t=EDP.LS&ty=c&ta=1&p=d&s=l" alt="Gráfico EDP">
+          </a>
+        </td>
+        <td id="edp-price">A carregar...</td>
+        <td id="edp-variation">—</td>
       </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ação</th>
+        <th>Preço</th>
+        <th>Variação</th>
+      </tr>
+    </thead>
+    <tbody id="dynamic-stocks">
+      <tr><td colspan="3">A carregar...</td></tr>
     </tbody>
   </table>
 
@@ -100,15 +128,7 @@
   </div>
 
   <script>
-    const symbolMap = {
-      "EDP.LS": "EDP",
-      "BATS:AIQ": "AIQ",
-      "BATS:QTUM": "QTUM",
-      "NYSE:GNL": "GNL"
-    };
-
     const chartSymbols = {
-      "EDP": null, // Sem gráfico
       "AIQ": "BATS:AIQ",
       "QTUM": "BATS:QTUM",
       "GNL": "NYSE:GNL"
@@ -119,40 +139,44 @@
         const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
         const data = await res.json();
 
-        const tbody = document.getElementById("stocks-table");
-        tbody.innerHTML = "";
+        const dynamicTbody = document.getElementById("dynamic-stocks");
+        dynamicTbody.innerHTML = "";
 
         data.forEach(stock => {
-          const name = symbolMap[stock.symbol] || stock.symbol;
+          const symbol = stock.symbol;
+          const name = symbol.replace("BATS:", "").replace("NYSE:", "");
           const price = stock.price.toFixed(2);
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
 
-          const tr = document.createElement("tr");
+          if (symbol === "EDP.LS") {
+            // Atualiza a EDP
+            document.getElementById("edp-price").textContent = `€${price}`;
+            document.getElementById("edp-variation").textContent = `${variation}%`;
+            document.getElementById("edp-variation").className = variationClass;
+            return;
+          }
 
+          const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><span class="symbol">${name}</span></td>
             <td>€${price}</td>
             <td class="${variationClass}">${variation}%</td>
           `;
 
-          if (chartSymbols[name]) {
-            tr.onclick = () => loadChart(chartSymbols[name]);
-          }
-
-          tbody.appendChild(tr);
+          tr.onclick = () => loadChart(symbol);
+          dynamicTbody.appendChild(tr);
         });
       } catch (error) {
-        document.getElementById("stocks-table").innerHTML = `
+        document.getElementById("dynamic-stocks").innerHTML = `
           <tr><td colspan="3">Erro ao carregar dados.</td></tr>
         `;
       }
     }
 
     function loadChart(symbol) {
-      if (!symbol) return;
-      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
-      document.getElementById("chart-frame").innerHTML = `
+      document.getElementById('chart-title').innerText = `📈 Gráfico: ${symbol}`;
+      document.getElementById('chart-frame').innerHTML = `
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
     }
