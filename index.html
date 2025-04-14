@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações</title>
+  <title>Painel de Ações em Tempo Real</title>
   <style>
     body {
       background-color: #1e1e1e;
@@ -22,6 +22,7 @@
       height: 250px;
       border: none;
       border-radius: 6px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -31,25 +32,32 @@
 
   <script>
     async function fetchAcoes() {
-      const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
-      const data = await res.json();
-      document.getElementById('acoes-realtime').innerHTML = data.map(a => {
-        const tradingViewSymbol = a.symbol === "EDP.LS" ? "EURONEXT:EDP" : a.symbol;
+      try {
+        const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
+        const data = await res.json();
+        document.getElementById('acoes-realtime').innerHTML = data.map(a => {
+          const symbol = a.symbol;
+          const shortName = a.shortName;
+          const price = a.price;
 
-        return `
-          <div class='stock-card'>
-            <h3>${a.shortName} (${a.symbol})</h3>
-            <p><strong>Preço atual:</strong> ${a.price}</p>
-            ${tradingViewSymbol !== "EDP.LS" ? `
-              <iframe src='https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
-            ` : ''}
-          </div>
-        `;
-      }).join('');
+          // Corrigir símbolo da EDP para o gráfico
+          const tradingViewSymbol = symbol === "EDP.LS" ? "EURONEXT:EDP" : symbol;
+
+          return `
+            <div class="stock-card">
+              <h3>${shortName} (${symbol})</h3>
+              <p><strong>Preço atual:</strong> ${price}</p>
+              <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        document.getElementById('acoes-realtime').innerHTML = "<p>Erro ao carregar dados.</p>";
+      }
     }
 
     fetchAcoes();
-    setInterval(fetchAcoes, 30000);
+    setInterval(fetchAcoes, 30000); // Atualiza a cada 30 segundos
   </script>
 </body>
 </html>
