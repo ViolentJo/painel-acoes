@@ -4,50 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel de Ações</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg: #111;
-      --card-bg: #1a1a1a;
-      --card-hover: #222;
-      --text: #fff;
-      --positive: #4caf50;
-      --negative: #f44336;
-      --accent: #4caf50;
-    }
-    body.light {
-      --bg: #f2f2f2;
-      --card-bg: #ffffff;
-      --card-hover: #f4f4f4;
-      --text: #111;
-    }
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
       margin: 0;
       padding: 30px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
     }
     .theme-toggle {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: var(--card-bg);
-      color: var(--text);
+      background: #1a1a1a;
+      color: #fff;
       border: 1px solid #444;
       padding: 8px 14px;
       border-radius: 20px;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: 0.3s;
-    }
-    .theme-toggle:hover {
-      background: var(--card-hover);
     }
     .cards-container {
       display: flex;
@@ -56,46 +30,37 @@
       justify-content: center;
     }
     .stock-card {
-      background-color: var(--card-bg);
+      background: #1a1a1a;
       border: 1px solid #333;
       border-radius: 8px;
       padding: 20px;
       width: 280px;
-      box-sizing: border-box;
       text-align: center;
-      transition: transform 0.3s ease, background-color 0.3s;
     }
     .stock-card:hover {
-      background-color: var(--card-hover);
-      transform: translateY(-5px);
+      background-color: #222;
     }
     .symbol {
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 10px;
-      display: block;
     }
     .price {
       font-size: 1.6rem;
       margin-bottom: 10px;
     }
     .variation {
-      font-size: 1rem;
       margin-bottom: 10px;
     }
     .positive {
-      color: var(--positive);
+      color: #4caf50;
     }
     .negative {
-      color: var(--negative);
-    }
-    .info-line {
-      margin-bottom: 6px;
-      font-size: 0.95rem;
+      color: #f44336;
     }
     .chart-btn {
-      background-color: var(--accent);
-      color: #fff;
+      background: #4caf50;
+      color: white;
       padding: 8px 12px;
       text-decoration: none;
       border-radius: 4px;
@@ -118,9 +83,8 @@
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo Claro/Escuro</button>
-  <h1>📊 Painel de Ações</h1>
-
+  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  <h1 style="text-align:center;">📊 Painel de Ações</h1>
   <div class="cards-container" id="cards-container"></div>
 
   <div id="chart-container">
@@ -131,9 +95,16 @@
   <script>
     const cardTitles = {
       "EDP.LS": 470500,
-      "BATS:AIQ": 4050,
-      "BATS:QTUM": 1990,
-      "NYSE:GNL": 28100
+      "AIQ": 4050,
+      "QTUM": 1990,
+      "GNL": 28100
+    };
+
+    const tradingViewMap = {
+      "AIQ": "BATS:AIQ",
+      "QTUM": "BATS:QTUM",
+      "GNL": "NYSE:GNL",
+      "EDP.LS": "EURONEXT-EDP"
     };
 
     async function fetchStocks() {
@@ -146,7 +117,7 @@
 
         data.forEach(stock => {
           const symbol = stock.symbol;
-          const name = symbol.replace("BATS:", "").replace("NYSE:", "").replace(".LS", "");
+          const name = symbol.replace(".LS", "");
           const price = parseFloat(stock.price).toFixed(2);
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
@@ -156,46 +127,42 @@
           const card = document.createElement("div");
           card.className = "stock-card";
 
+          const chartSymbol = tradingViewMap[symbol];
+
           const chartBtn = symbol === "EDP.LS"
-            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">Ver gráfico</a>`
-            : `<a class="chart-btn" href="#" onclick="loadChart('${symbol}'); return false;">Ver gráfico</a>`;
+            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
+            : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
 
           card.innerHTML = `
-            <span class="symbol">${name}</span>
+            <div class="symbol">${name}</div>
             <div class="price">€${price}</div>
             <div class="variation ${variationClass}">${variation}%</div>
-            <div class="info-line">Títulos: ${titles.toLocaleString()}</div>
-            <div class="info-line"><strong>Total:</strong> €${parseFloat(total).toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            <div>Títulos: ${titles.toLocaleString()}</div>
+            <div>Total: €${parseFloat(total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
             ${chartBtn}
           `;
 
           container.appendChild(card);
         });
       } catch (err) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
       }
     }
 
-    function loadChart(symbol) {
+    function loadChart(tradingSymbol) {
       document.getElementById("chart-container").style.display = "block";
-      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
+      document.getElementById("chart-title").innerText = `📈 Gráfico: ${tradingSymbol}`;
       document.getElementById("chart-frame").innerHTML = `
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
     }
 
     function toggleTheme() {
       document.body.classList.toggle("light");
-      localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
     }
 
-    window.onload = () => {
-      if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light");
-      }
-      fetchStocks();
-      setInterval(fetchStocks, 30000);
-    };
+    fetchStocks();
+    setInterval(fetchStocks, 30000);
   </script>
 </body>
 </html>
