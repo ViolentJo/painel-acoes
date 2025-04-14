@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt">
->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -128,7 +127,7 @@
 
         data.forEach(stock => {
           const symbol = stock.symbol;
-          if (symbol === "EURUSD=X") return; // ignorar este no display
+          if (symbol === "EURUSD=X") return;
 
           const name = stock.shortName || symbol;
           const price = parseFloat(stock.price);
@@ -165,11 +164,7 @@
         const totalFinal = totalEUR + convertedUSD;
 
         document.getElementById("portfolio-total").innerHTML = `
-          <div>🇪🇺 Total em EUR (EDP): €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>🇺🇸 Total em USD: $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>💱 Conversão USD→EUR (@${usdToEurRate.toFixed(4)}): €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <hr>
-          <strong>💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          <strong style="font-size: 1.4rem;">💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
         `;
       } catch (err) {
         document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
