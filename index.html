@@ -37,7 +37,7 @@ const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
         <div class='stock-card'>
           <h3>${a.shortName} (${a.symbol})</h3>
           <p><strong>Preço atual:</strong> ${a.price}</p>
-          <iframe src='https://s.tradingview.com/widgetembed/?symbol=${a.symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
+          <iframe src='https://s.tradingview.com/widgetembed/?symbol=${a.symbol === "EDP.LS" ? "EURONEXT:EDP" : a.symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
         </div>
       `).join('');
     }
