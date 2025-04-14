@@ -109,7 +109,6 @@
     <h2 id="chart-title">📈 Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-
   <script>
     const cardTitles = {
       "EDP.LS": 470500,
@@ -184,13 +183,12 @@
         const totalFinal = totalEUR + convertedUSD;
 
         document.getElementById("portfolio-total").innerHTML = `
-          <div>🇪🇺 EDP: €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>🇺🇸 USD: $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>💱 Conversão: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇪🇺 EDP (EUR): €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇺🇸 AIQ + QTUM + GNL (USD): $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>💱 Conversão para EUR: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <hr>
-          <strong>💶 Total: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          <strong>💶 Total em EUR: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
         `;
-
       } catch (err) {
         document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
       }
