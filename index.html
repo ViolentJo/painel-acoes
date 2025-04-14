@@ -31,15 +31,21 @@
 
   <script>
     async function fetchAcoes() {
-const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
+      const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
       const data = await res.json();
-      document.getElementById('acoes-realtime').innerHTML = data.map(a => `
-        <div class='stock-card'>
-          <h3>${a.shortName} (${a.symbol})</h3>
-          <p><strong>Preço atual:</strong> ${a.price}</p>
-          <iframe src='https://s.tradingview.com/widgetembed/?symbol=${a.symbol === "EDP.LS" ? "EURONEXT:EDP" : a.symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
-        </div>
-      `).join('');
+      document.getElementById('acoes-realtime').innerHTML = data.map(a => {
+        const tradingViewSymbol = a.symbol === "EDP.LS" ? "EURONEXT:EDP" : a.symbol;
+
+        return `
+          <div class='stock-card'>
+            <h3>${a.shortName} (${a.symbol})</h3>
+            <p><strong>Preço atual:</strong> ${a.price}</p>
+            ${tradingViewSymbol !== "EDP.LS" ? `
+              <iframe src='https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
     }
 
     fetchAcoes();
