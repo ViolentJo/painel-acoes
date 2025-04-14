@@ -63,10 +63,11 @@
       font-size: 1rem;
     }
 
-    #chart-container {
+    #chart-container, #edp-graph {
       max-width: 900px;
-      margin: 0 auto;
+      margin: 40px auto;
       text-align: center;
+      display: none;
     }
 
     iframe {
@@ -77,7 +78,7 @@
     }
 
     img {
-      max-width: 220px;
+      max-width: 100%;
       border-radius: 6px;
       margin-top: 10px;
     }
@@ -95,14 +96,8 @@
       </tr>
     </thead>
     <tbody id="stocks-table">
-      <!-- Linha da EDP com imagem clicável -->
-      <tr>
-        <td>
-          <span class="symbol">EDP</span><br>
-          <a href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">
-            <img src="https://finviz.com/chart.ashx?t=EDP.LS&ty=c&ta=1&p=d&s=l" alt="Gráfico EDP">
-          </a>
-        </td>
+      <tr onclick="showEDP()">
+        <td><span class="symbol">EDP</span></td>
         <td id="edp-price">A carregar...</td>
         <td id="edp-variation">—</td>
       </tr>
@@ -122,8 +117,17 @@
     </tbody>
   </table>
 
+  <!-- Gráfico da EDP (imagem) -->
+  <div id="edp-graph">
+    <h2>📈 Gráfico: EDP</h2>
+    <a href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">
+      <img src="https://finviz.com/chart.ashx?t=EDP.LS&ty=c&ta=1&p=d&s=l" alt="Gráfico EDP">
+    </a>
+  </div>
+
+  <!-- Gráfico interativo para AIQ, QTUM, GNL -->
   <div id="chart-container">
-    <h2 id="chart-title">Seleciona uma ação para ver o gráfico</h2>
+    <h2 id="chart-title">📈 Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
 
@@ -175,10 +179,17 @@
     }
 
     function loadChart(symbol) {
+      document.getElementById('edp-graph').style.display = 'none';
+      document.getElementById('chart-container').style.display = 'block';
       document.getElementById('chart-title').innerText = `📈 Gráfico: ${symbol}`;
       document.getElementById('chart-frame').innerHTML = `
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
+    }
+
+    function showEDP() {
+      document.getElementById('chart-container').style.display = 'none';
+      document.getElementById('edp-graph').style.display = 'block';
     }
 
     fetchStocks();
