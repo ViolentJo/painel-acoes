@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações</title>
+  <title>Painel de Ações – Cards</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -16,37 +16,45 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 40px;
-      font-size: 2rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
       margin-bottom: 30px;
     }
 
-    th, td {
-      padding: 14px;
-      text-align: left;
-      vertical-align: middle;
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
-    th {
-      background-color: #1f1f1f;
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      border-bottom: 1px solid #333;
-    }
-
-    tr {
+    .stock-card {
       background-color: #1a1a1a;
-      border-bottom: 1px solid #2a2a2a;
-      transition: background 0.2s ease;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      width: 280px;
+      box-sizing: border-box;
+      transition: 0.3s;
     }
 
-    tr:hover {
+    .stock-card:hover {
       background-color: #222;
+    }
+
+    .symbol {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .price {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    .variation {
+      font-size: 1rem;
+      margin-bottom: 15px;
     }
 
     .positive {
@@ -57,14 +65,19 @@
       color: #f44336;
     }
 
-    .symbol {
-      font-weight: bold;
-      font-size: 1rem;
+    .chart-btn {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+      font-size: 0.9rem;
     }
 
     #chart-container {
       max-width: 900px;
-      margin: 40px auto;
+      margin: 40px auto 0;
       text-align: center;
       display: none;
     }
@@ -75,29 +88,14 @@
       border: none;
       border-radius: 6px;
     }
-
-    a {
-      color: #4caf50;
-      text-decoration: none;
-    }
   </style>
 </head>
 <body>
   <h1>📊 Painel de Ações</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Ação</th>
-        <th>Preço</th>
-        <th>Variação</th>
-        <th>Gráfico</th>
-      </tr>
-    </thead>
-    <tbody id="stocks-table">
-      <tr><td colspan="4">A carregar...</td></tr>
-    </tbody>
-  </table>
+  <div class="cards-container" id="cards-container">
+    <!-- Cards aparecem aqui -->
+  </div>
 
   <!-- Gráfico interativo -->
   <div id="chart-container">
@@ -117,8 +115,8 @@
         const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
         const data = await res.json();
 
-        const tbody = document.getElementById("stocks-table");
-        tbody.innerHTML = "";
+        const container = document.getElementById("cards-container");
+        container.innerHTML = "";
 
         data.forEach(stock => {
           const symbol = stock.symbol;
@@ -127,35 +125,31 @@
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
 
-          const tr = document.createElement("tr");
+          const card = document.createElement("div");
+          card.className = "stock-card";
 
-          let chartColumn = "";
-          if (symbol === "EDP.LS") {
-            chartColumn = `<a href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">Ver gráfico</a>`;
-          } else {
-            chartColumn = `<a href="#" onclick="loadChart('${symbol}'); return false;">Ver gráfico</a>`;
-          }
+          const chartButton = symbol === "EDP.LS"
+            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/EURONEXT-EDP/" target="_blank">Ver gráfico</a>`
+            : `<a class="chart-btn" href="#" onclick="loadChart('${symbol}'); return false;">Ver gráfico</a>`;
 
-          tr.innerHTML = `
-            <td><span class="symbol">${name}</span></td>
-            <td>€${price}</td>
-            <td class="${variationClass}">${variation}%</td>
-            <td>${chartColumn}</td>
+          card.innerHTML = `
+            <span class="symbol">${name}</span>
+            <div class="price">€${price}</div>
+            <div class="variation ${variationClass}">${variation}%</div>
+            ${chartButton}
           `;
 
-          tbody.appendChild(tr);
+          container.appendChild(card);
         });
       } catch (error) {
-        document.getElementById("stocks-table").innerHTML = `
-          <tr><td colspan="4">Erro ao carregar dados.</td></tr>
-        `;
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
       }
     }
 
     function loadChart(symbol) {
-      document.getElementById('chart-container').style.display = 'block';
-      document.getElementById('chart-title').innerText = `📈 Gráfico: ${symbol}`;
-      document.getElementById('chart-frame').innerHTML = `
+      document.getElementById("chart-container").style.display = "block";
+      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
+      document.getElementById("chart-frame").innerHTML = `
         <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
     }
