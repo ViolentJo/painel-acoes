@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações – Cards</title>
+  <title>Painel de Ações – Logotipos</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -70,12 +70,20 @@
       padding: 20px;
       width: 280px;
       box-sizing: border-box;
+      text-align: center;
       transition: transform 0.3s ease, background-color 0.3s;
     }
 
     .stock-card:hover {
       background-color: var(--card-hover);
       transform: translateY(-5px);
+    }
+
+    .logo {
+      max-height: 60px;
+      max-width: 100px;
+      object-fit: contain;
+      margin-bottom: 12px;
     }
 
     .symbol {
@@ -145,7 +153,7 @@
   <h1>📊 Painel de Ações</h1>
 
   <div class="cards-container" id="cards-container">
-    <!-- Cards dinâmicos -->
+    <!-- Cards gerados dinamicamente -->
   </div>
 
   <!-- Gráfico interativo -->
@@ -155,10 +163,11 @@
   </div>
 
   <script>
-    const chartSymbols = {
-      "AIQ": "BATS:AIQ",
-      "QTUM": "BATS:QTUM",
-      "GNL": "NYSE:GNL"
+    const logos = {
+      "EDP.LS": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/EDP_Logo.svg/600px-EDP_Logo.svg.png",
+      "BATS:AIQ": "https://seeklogo.com/images/G/global-x-etfs-logo-76F943BE2E-seeklogo.com.png",
+      "BATS:QTUM": "https://yt3.googleusercontent.com/ytc/AMLnZu9fInR0_xBL2vnh1T-mCy53V4D7KKjMd-R8iEm5mg=s900-c-k-c0x00ffffff-no-rj",
+      "NYSE:GNL": "https://www.globalnetlease.com/images/logo.png"
     };
 
     async function fetchStocks() {
@@ -175,6 +184,7 @@
           const price = stock.price.toFixed(2);
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
+          const logo = logos[symbol] || "";
 
           const card = document.createElement("div");
           card.className = "stock-card";
@@ -184,6 +194,7 @@
             : `<a class="chart-btn" href="#" onclick="loadChart('${symbol}'); return false;">Ver gráfico</a>`;
 
           card.innerHTML = `
+            <img src="${logo}" class="logo" alt="Logo ${name}" />
             <span class="symbol">${name}</span>
             <div class="price">€${price}</div>
             <div class="variation ${variationClass}">${variation}%</div>
@@ -210,7 +221,6 @@
       localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
     }
 
-    // Carregar tema salvo
     window.onload = () => {
       if (localStorage.getItem("theme") === "light") {
         document.body.classList.add("light");
