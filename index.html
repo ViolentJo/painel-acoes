@@ -31,22 +31,25 @@
   <div id="acoes-realtime">A carregar...</div>
 
   <script>
+    const symbolMap = {
+      "EDP.LS": "EURONEXT:EDP",
+      "AIQ": "NYSEARCA:AIQ",
+      "QTUM": "NYSEARCA:QTUM",
+      "GNL": "NYSE:GNL"
+    };
+
     async function fetchAcoes() {
       try {
         const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
         const data = await res.json();
         document.getElementById('acoes-realtime').innerHTML = data.map(a => {
-          const symbol = a.symbol;
-          const shortName = a.shortName;
-          const price = a.price;
-
-          // Corrigir símbolo da EDP para o gráfico
-          const tradingViewSymbol = symbol === "EDP.LS" ? "EURONEXT:EDP" : symbol;
+          const originalSymbol = a.symbol;
+          const tradingViewSymbol = symbolMap[originalSymbol] || originalSymbol;
 
           return `
             <div class="stock-card">
-              <h3>${shortName} (${symbol})</h3>
-              <p><strong>Preço atual:</strong> ${price}</p>
+              <h3>${a.shortName} (${originalSymbol})</h3>
+              <p><strong>Preço atual:</strong> ${a.price}</p>
               <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
             </div>
           `;
