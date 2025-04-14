@@ -3,237 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações em Tempo Real</title>
+  <title>Painel Interativo de Ações</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --text-color: #f1f1f1;
-    }
-
-    body.light {
-      --bg-color: #f5f5f5;
-      --card-bg: #ffffff;
-      --text-color: #111111;
-    }
-
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #121212;
+      color: #f1f1f1;
       font-family: 'Inter', sans-serif;
       margin: 0;
-      padding: 0;
-      transition: background-color 0.3s, color 0.3s;
+      padding: 30px;
     }
 
-    header {
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .quote-buttons {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 30px;
-      background-color: var(--card-bg);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 40px;
     }
 
-    .menu-toggle {
-      font-size: 24px;
+    .quote-card {
+      background: #1e1e1e;
+      border: 2px solid transparent;
+      border-radius: 8px;
       cursor: pointer;
+      padding: 10px;
+      transition: border-color 0.3s ease;
     }
 
-    .sidebar {
-      position: fixed;
-      left: -250px;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: var(--card-bg);
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-      padding: 30px;
-      transition: left 0.3s;
-      z-index: 1000;
+    .quote-card:hover {
+      border-color: #4caf50;
     }
 
-    .sidebar.open {
-      left: 0;
-    }
-
-    .toggle-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 30px;
-    }
-
-    .toggle-container label {
-      font-weight: 600;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      padding: 30px;
-    }
-
-    .stock-card {
-      background: var(--card-bg);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s ease, background 0.3s, color 0.3s;
-    }
-
-    .stock-card:hover {
-      transform: scale(1.02);
-    }
-
-    .stock-title {
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    .stock-price {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .positive {
-      color: #4caf50;
-    }
-
-    .negative {
-      color: #f44336;
+    .quote-card.active {
+      border-color: #f1c40f;
     }
 
     iframe {
-      width: 100%;
-      height: 250px;
       border: none;
       border-radius: 6px;
-      margin-top: 10px;
     }
 
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 26px;
+    #chart-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
     }
 
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 30px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: #4caf50;
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(24px);
+    @media (max-width: 600px) {
+      .quote-card {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar" id="sidebar">
-    <h3>⚙️ Opções</h3>
-    <div class="toggle-container">
-      <label for="darkModeToggle">Modo Claro</label>
-      <label class="switch">
-        <input type="checkbox" id="darkModeToggle" />
-        <span class="slider"></span>
-      </label>
+  <h1>📊 Painel Interativo de Ações</h1>
+
+  <div class="quote-buttons">
+    <div class="quote-card" onclick="loadChart('EURONEXT:EDP', this)">
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=EURONEXT:EDP&locale=pt" width="200" height="100"></iframe>
+    </div>
+    <div class="quote-card" onclick="loadChart('NYSEARCA:AIQ', this)">
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=NYSEARCA:AIQ&locale=pt" width="200" height="100"></iframe>
+    </div>
+    <div class="quote-card" onclick="loadChart('NYSEARCA:QTUM', this)">
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=NYSEARCA:QTUM&locale=pt" width="200" height="100"></iframe>
+    </div>
+    <div class="quote-card" onclick="loadChart('NYSE:GNL', this)">
+      <iframe src="https://s.tradingview.com/embed-widget/single-quote/?symbol=NYSE:GNL&locale=pt" width="200" height="100"></iframe>
     </div>
   </div>
 
-  <header>
-    <h1>📈 Painel de Ações</h1>
-    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-  </header>
-
-  <div id="acoes-realtime" class="grid">A carregar...</div>
+  <div id="chart-container">
+    <h2 id="chart-title">Selecione uma ação para ver o gráfico</h2>
+    <div id="chart-frame"></div>
+  </div>
 
   <script>
-    const symbolMap = {
-      "EDP.LS": "EURONEXT:EDP",
-      "AIQ": "NYSEARCA:AIQ",
-      "QTUM": "NYSEARCA:QTUM",
-      "GNL": "NYSE:GNL"
-    };
+    let activeCard = null;
 
-    const toggleSidebar = () => {
-      document.getElementById('sidebar').classList.toggle('open');
-    };
+    function loadChart(symbol, card) {
+      const container = document.getElementById('chart-frame');
+      const title = document.getElementById('chart-title');
 
-    // Modo claro/escuro com localStorage
-    const toggle = document.getElementById('darkModeToggle');
-    const isLight = localStorage.getItem('theme') === 'light';
-    if (isLight) {
-      document.body.classList.add('light');
-      toggle.checked = true;
+      // Atualiza o gráfico
+      container.innerHTML = `
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1" 
+          width="100%" height="500"></iframe>
+      `;
+
+      title.innerText = `📈 Gráfico: ${symbol}`;
+
+      // Marca o botão ativo
+      if (activeCard) activeCard.classList.remove('active');
+      card.classList.add('active');
+      activeCard = card;
     }
-
-    toggle.addEventListener('change', () => {
-      document.body.classList.toggle('light');
-      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
-    });
-
-    async function fetchAcoes() {
-      try {
-        const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
-        const data = await res.json();
-
-        document.getElementById('acoes-realtime').innerHTML = data.map(a => {
-          const originalSymbol = a.symbol;
-          const tradingViewSymbol = symbolMap[originalSymbol] || originalSymbol;
-          const price = a.price;
-          const shortName = a.shortName;
-          const randomVariation = (Math.random() * 2 - 1).toFixed(2);
-          const variationClass = randomVariation >= 0 ? 'positive' : 'negative';
-
-          return `
-            <div class="stock-card">
-              <div class="stock-title">${shortName} (${originalSymbol})</div>
-              <div class="stock-price ${variationClass}">€${price.toFixed(2)} <small>(${randomVariation}%)</small></div>
-              <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
-            </div>
-          `;
-        }).join('');
-      } catch (error) {
-        document.getElementById('acoes-realtime').innerHTML = "<p>Erro ao carregar dados.</p>";
-      }
-    }
-
-    fetchAcoes();
-    setInterval(fetchAcoes, 30000);
   </script>
 </body>
 </html>
