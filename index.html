@@ -93,7 +93,6 @@
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   <h1>📊 Painel de Ações</h1>
 
-  <!-- PORTFOLIO CARD -->
   <div class="cards-container">
     <div class="stock-card" id="portfolio-card">
       <div class="symbol">💼 Portfólio Total</div>
@@ -101,14 +100,13 @@
     </div>
   </div>
 
-  <!-- STOCK CARDS -->
   <div class="cards-container" id="cards-container"></div>
 
-  <!-- CHART AREA -->
   <div id="chart-container">
     <h2 id="chart-title">📈 Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
+
   <script>
     const cardTitles = {
       "EDP.LS": 470500,
@@ -125,26 +123,19 @@
     };
 
     const dollarStocks = ["AIQ", "QTUM", "GNL"];
-
-    async function fetchExchangeRate() {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=EUR");
-      const data = await res.json();
-      return data.rates.EUR;
-    }
+    const usdToEurRate = 0.92; // TAXA FIXA
 
     async function fetchStocks() {
       try {
-        const [stockRes, eurRate] = await Promise.all([
-          fetch("https://yahoo-finance-api-1.onrender.com/api/stocks").then(r => r.json()),
-          fetchExchangeRate()
-        ]);
+        const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
+        const data = await res.json();
 
         const container = document.getElementById("cards-container");
         container.innerHTML = "";
         let totalEUR = 0;
         let totalUSD = 0;
 
-        stockRes.forEach(stock => {
+        data.forEach(stock => {
           const symbol = stock.symbol;
           const name = symbol.replace(".LS", "");
           const price = parseFloat(stock.price);
@@ -173,24 +164,24 @@
             <div class="price">${currency}${priceStr}</div>
             <div class="variation ${variationClass}">${variation}%</div>
             <div>Títulos: ${titles.toLocaleString()}</div>
-            <div>Total: ${currency}${total.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+            <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
             ${chartBtn}
           `;
           container.appendChild(card);
         });
 
-        const convertedUSD = totalUSD * eurRate;
+        const convertedUSD = totalUSD * usdToEurRate;
         const totalFinal = totalEUR + convertedUSD;
 
         document.getElementById("portfolio-total").innerHTML = `
           <div>🇪🇺 EDP (EUR): €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>🇺🇸 AIQ + QTUM + GNL (USD): $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div>💱 Conversão para EUR: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇺🇸 AIQ, QTUM, GNL (USD): $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>💱 Convertido: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <hr>
-          <strong>💶 Total em EUR: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+          <strong>💶 Total EUR: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
         `;
       } catch (err) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
       }
     }
 
