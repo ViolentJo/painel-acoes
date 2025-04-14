@@ -41,6 +41,9 @@
       width: 280px;
       text-align: center;
     }
+    #portfolio-card {
+      margin-bottom: 30px;
+    }
     .stock-card:hover {
       background-color: #222;
     }
@@ -90,7 +93,7 @@
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   <h1>📊 Painel de Ações</h1>
 
-  <!-- CARD DO PORTFÓLIO -->
+  <!-- PORTFOLIO CARD -->
   <div class="cards-container">
     <div class="stock-card" id="portfolio-card">
       <div class="symbol">💼 Portfólio Total</div>
@@ -98,8 +101,10 @@
     </div>
   </div>
 
+  <!-- STOCK CARDS -->
   <div class="cards-container" id="cards-container"></div>
 
+  <!-- CHART AREA -->
   <div id="chart-container">
     <h2 id="chart-title">📈 Gráfico</h2>
     <div id="chart-frame"></div>
@@ -120,60 +125,82 @@
       "EDP.LS": "EURONEXT-EDP"
     };
 
+    const dollarStocks = ["AIQ", "QTUM", "GNL"];
+
+    async function fetchExchangeRate() {
+      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=EUR");
+      const data = await res.json();
+      return data.rates.EUR;
+    }
+
     async function fetchStocks() {
       try {
-        const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
-        const data = await res.json();
+        const [stockRes, eurRate] = await Promise.all([
+          fetch("https://yahoo-finance-api-1.onrender.com/api/stocks").then(r => r.json()),
+          fetchExchangeRate()
+        ]);
 
         const container = document.getElementById("cards-container");
         container.innerHTML = "";
-        let totalPortfolio = 0;
+        let totalEUR = 0;
+        let totalUSD = 0;
 
-        data.forEach(stock => {
+        stockRes.forEach(stock => {
           const symbol = stock.symbol;
           const name = symbol.replace(".LS", "");
-          const price = parseFloat(stock.price).toFixed(2);
+          const price = parseFloat(stock.price);
+          const priceStr = price.toFixed(2);
           const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
           const titles = cardTitles[symbol] || 0;
-          const total = (titles * price).toFixed(2);
-          totalPortfolio += parseFloat(total);
+          const total = titles * price;
+          const isDollar = dollarStocks.includes(symbol);
+          const currency = isDollar ? "$" : "€";
+          if (isDollar) {
+            totalUSD += total;
+          } else {
+            totalEUR += total;
+          }
 
           const card = document.createElement("div");
           card.className = "stock-card";
-
           const chartSymbol = tradingViewMap[symbol];
-
           const chartBtn = symbol === "EDP.LS"
             ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
             : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
 
           card.innerHTML = `
             <div class="symbol">${name}</div>
-            <div class="price">€${price}</div>
+            <div class="price">${currency}${priceStr}</div>
             <div class="variation ${variationClass}">${variation}%</div>
             <div>Títulos: ${titles.toLocaleString()}</div>
-            <div>Total: €${parseFloat(total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div>Total: ${currency}${total.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
             ${chartBtn}
           `;
-
           container.appendChild(card);
         });
 
-        // Atualizar card do portfólio
-        document.getElementById("portfolio-total").innerText =
-          `€${totalPortfolio.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+        const convertedUSD = totalUSD * eurRate;
+        const totalFinal = totalEUR + convertedUSD;
+
+        document.getElementById("portfolio-total").innerHTML = `
+          <div>🇪🇺 EDP: €${totalEUR.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>🇺🇸 USD: $${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>💱 Conversão: €${convertedUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <hr>
+          <strong>💶 Total: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+        `;
 
       } catch (err) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar ações.</p>`;
+        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
       }
     }
 
-    function loadChart(tradingSymbol) {
+    function loadChart(symbol) {
       document.getElementById("chart-container").style.display = "block";
-      document.getElementById("chart-title").innerText = `📈 Gráfico: ${tradingSymbol}`;
+      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
       document.getElementById("chart-frame").innerHTML = `
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
       `;
     }
 
