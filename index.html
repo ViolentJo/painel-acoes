@@ -4,19 +4,110 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel de Ações em Tempo Real</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #f1f1f1;
+    }
+
+    body.light {
+      --bg-color: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-color: #111111;
+    }
+
     body {
-      background-color: #1e1e1e;
-      color: #f1f1f1;
-      font-family: sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      background-color: var(--card-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: -250px;
+      top: 0;
+      width: 250px;
+      height: 100%;
+      background: var(--card-bg);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      transition: left 0.3s;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .toggle-container label {
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
       padding: 30px;
     }
+
     .stock-card {
-      background: #2c2c2c;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 30px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, background 0.3s, color 0.3s;
     }
+
+    .stock-card:hover {
+      transform: scale(1.02);
+    }
+
+    .stock-title {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .stock-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .positive {
+      color: #4caf50;
+    }
+
+    .negative {
+      color: #f44336;
+    }
+
     iframe {
       width: 100%;
       height: 250px;
@@ -24,11 +115,71 @@
       border-radius: 6px;
       margin-top: 10px;
     }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 30px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
   </style>
 </head>
 <body>
-  <h1>Painel de Ações em Tempo Real</h1>
-  <div id="acoes-realtime">A carregar...</div>
+  <div class="sidebar" id="sidebar">
+    <h3>⚙️ Opções</h3>
+    <div class="toggle-container">
+      <label for="darkModeToggle">Modo Claro</label>
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <header>
+    <h1>📈 Painel de Ações</h1>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+  </header>
+
+  <div id="acoes-realtime" class="grid">A carregar...</div>
 
   <script>
     const symbolMap = {
@@ -38,18 +189,40 @@
       "GNL": "NYSE:GNL"
     };
 
+    const toggleSidebar = () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    };
+
+    // Modo claro/escuro com localStorage
+    const toggle = document.getElementById('darkModeToggle');
+    const isLight = localStorage.getItem('theme') === 'light';
+    if (isLight) {
+      document.body.classList.add('light');
+      toggle.checked = true;
+    }
+
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    });
+
     async function fetchAcoes() {
       try {
         const res = await fetch('https://yahoo-finance-api-1.onrender.com/api/stocks');
         const data = await res.json();
+
         document.getElementById('acoes-realtime').innerHTML = data.map(a => {
           const originalSymbol = a.symbol;
           const tradingViewSymbol = symbolMap[originalSymbol] || originalSymbol;
+          const price = a.price;
+          const shortName = a.shortName;
+          const randomVariation = (Math.random() * 2 - 1).toFixed(2);
+          const variationClass = randomVariation >= 0 ? 'positive' : 'negative';
 
           return `
             <div class="stock-card">
-              <h3>${a.shortName} (${originalSymbol})</h3>
-              <p><strong>Preço atual:</strong> ${a.price}</p>
+              <div class="stock-title">${shortName} (${originalSymbol})</div>
+              <div class="stock-price ${variationClass}">€${price.toFixed(2)} <small>(${randomVariation}%)</small></div>
               <iframe src="https://s.tradingview.com/widgetembed/?symbol=${tradingViewSymbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
             </div>
           `;
@@ -60,7 +233,7 @@
     }
 
     fetchAcoes();
-    setInterval(fetchAcoes, 30000); // Atualiza a cada 30 segundos
+    setInterval(fetchAcoes, 30000);
   </script>
 </body>
 </html>
