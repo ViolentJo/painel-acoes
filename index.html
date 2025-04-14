@@ -87,29 +87,9 @@
         <th>Variação</th>
       </tr>
     </thead>
-    <tbody>
-      <!-- Linha dinâmica da EDP -->
-      <tr id="edp-row">
-        <td><span class="symbol">EDP</span></td>
-        <td id="edp-price">A carregar...</td>
-        <td id="edp-variation">—</td>
-      </tr>
-
-      <!-- Ações com gráfico -->
-      <tr onclick="loadChart('BATS:AIQ')">
-        <td><span class="symbol">AIQ</span></td>
-        <td>€25.31</td>
-        <td class="positive">+1.24%</td>
-      </tr>
-      <tr onclick="loadChart('BATS:QTUM')">
-        <td><span class="symbol">QTUM</span></td>
-        <td>€18.92</td>
-        <td class="negative">-0.85%</td>
-      </tr>
-      <tr onclick="loadChart('NYSE:GNL')">
-        <td><span class="symbol">GNL</span></td>
-        <td>€9.71</td>
-        <td class="positive">+0.47%</td>
+    <tbody id="stocks-table">
+      <tr>
+        <td colspan="3">A carregar...</td>
       </tr>
     </tbody>
   </table>
@@ -120,38 +100,65 @@
   </div>
 
   <script>
-    function loadChart(symbol) {
-      document.getElementById('chart-title').innerText = `📈 Gráfico: ${symbol}`;
-      document.getElementById('chart-frame').innerHTML = `
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
-      `;
-    }
+    const symbolMap = {
+      "EDP.LS": "EDP",
+      "BATS:AIQ": "AIQ",
+      "BATS:QTUM": "QTUM",
+      "NYSE:GNL": "GNL"
+    };
 
-    // Busca dados da API Render personalizada
-    async function fetchEDPFromRenderAPI() {
+    const chartSymbols = {
+      "EDP": null, // Sem gráfico
+      "AIQ": "BATS:AIQ",
+      "QTUM": "BATS:QTUM",
+      "GNL": "NYSE:GNL"
+    };
+
+    async function fetchStocks() {
       try {
         const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
         const data = await res.json();
 
-        const edp = data.find(stock => stock.symbol === "EDP.LS");
+        const tbody = document.getElementById("stocks-table");
+        tbody.innerHTML = "";
 
-        if (edp) {
-          const price = edp.price;
-          const variation = Math.random() * 2 - 1; // Simula variação
+        data.forEach(stock => {
+          const name = symbolMap[stock.symbol] || stock.symbol;
+          const price = stock.price.toFixed(2);
+          const variation = (Math.random() * 2 - 1).toFixed(2);
           const variationClass = variation >= 0 ? "positive" : "negative";
 
-          document.getElementById("edp-price").textContent = `€${price.toFixed(2)}`;
-          document.getElementById("edp-variation").textContent = `${variation.toFixed(2)}%`;
-          document.getElementById("edp-variation").className = variationClass;
-        }
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td><span class="symbol">${name}</span></td>
+            <td>€${price}</td>
+            <td class="${variationClass}">${variation}%</td>
+          `;
+
+          if (chartSymbols[name]) {
+            tr.onclick = () => loadChart(chartSymbols[name]);
+          }
+
+          tbody.appendChild(tr);
+        });
       } catch (error) {
-        document.getElementById("edp-price").textContent = "Erro";
-        document.getElementById("edp-variation").textContent = "—";
+        document.getElementById("stocks-table").innerHTML = `
+          <tr><td colspan="3">Erro ao carregar dados.</td></tr>
+        `;
       }
     }
 
-    fetchEDPFromRenderAPI();
-    setInterval(fetchEDPFromRenderAPI, 30000);
+    function loadChart(symbol) {
+      if (!symbol) return;
+      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
+      document.getElementById("chart-frame").innerHTML = `
+        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+      `;
+    }
+
+    fetchStocks();
+    setInterval(fetchStocks, 30000);
   </script>
 </body>
 </html>
