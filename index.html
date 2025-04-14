@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Ações</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+      font-family: sans-serif;
+      padding: 30px;
+    }
+    .stock-card {
+      background: #2c2c2c;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 30px;
+    }
+    iframe {
+      width: 100%;
+      height: 250px;
+      border: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Painel de Ações em Tempo Real</h1>
+  <div id="acoes-realtime">A carregar...</div>
+
+  <script>
+    async function fetchAcoes() {
+      const res = await fetch('https://yahoo-finance-api-am3c.onrender.com/api/stocks');
+      const data = await res.json();
+      document.getElementById('acoes-realtime').innerHTML = data.map(a => `
+        <div class='stock-card'>
+          <h3>${a.shortName} (${a.symbol})</h3>
+          <p><strong>Preço atual:</strong> ${a.price}</p>
+          <iframe src='https://s.tradingview.com/widgetembed/?symbol=${a.symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1'></iframe>
+        </div>
+      `).join('');
+    }
+
+    fetchAcoes();
+    setInterval(fetchAcoes, 30000);
+  </script>
+</body>
+</html>
