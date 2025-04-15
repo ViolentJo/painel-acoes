@@ -126,9 +126,9 @@
       <tbody>
         <tr>
           <td>EDP</td>
-          <td></td><td></td><td></td><td></td><td><strong>💶 €94.100</strong></td><td></td>
+          <td></td><td></td><td></td><td></td><td><strong>💶 €95.340</strong></td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td><strong>€94.100</strong></td>
+          <td><strong>€95.340</strong></td>
         </tr>
         <tr>
           <td>GNL</td>
@@ -141,123 +141,123 @@
       </tbody>
     </table>
   </div>
-  <script>
-    const cardTitles = {
-      "EDP.LS": 470500,
-      "AIQ": 4050,
-      "QTUM": 1990,
-      "GNL": 28100
-    };
+<script>
+  const cardTitles = {
+    "EDP.LS": 476700,  // Atualizado!
+    "AIQ": 4050,
+    "QTUM": 1990,
+    "GNL": 28100
+  };
 
-    const tradingViewMap = {
-      "AIQ": "BATS:AIQ",
-      "QTUM": "BATS:QTUM",
-      "GNL": "NYSE:GNL",
-      "EDP.LS": "EURONEXT-EDP"
-    };
+  const tradingViewMap = {
+    "AIQ": "BATS:AIQ",
+    "QTUM": "BATS:QTUM",
+    "GNL": "NYSE:GNL",
+    "EDP.LS": "EURONEXT-EDP"
+  };
 
-    const dollarStocks = ["AIQ", "QTUM", "GNL"];
+  const dollarStocks = ["AIQ", "QTUM", "GNL"];
 
-    async function fetchStocks() {
-      try {
-        const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
-        const data = await res.json();
+  async function fetchStocks() {
+    try {
+      const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
+      const data = await res.json();
 
-        const eurUsd = data.find(s => s.symbol === "EURUSD=X")?.price;
-        const usdToEurRate = eurUsd ? 1 / eurUsd : 0.92;
+      const eurUsd = data.find(s => s.symbol === "EURUSD=X")?.price;
+      const usdToEurRate = eurUsd ? 1 / eurUsd : 0.92;
 
-        const container = document.getElementById("cards-container");
-        container.innerHTML = "";
-        let totalEUR = 0;
-        let totalUSD = 0;
+      const container = document.getElementById("cards-container");
+      container.innerHTML = "";
+      let totalEUR = 0;
+      let totalUSD = 0;
 
-        data.forEach(stock => {
-          const symbol = stock.symbol;
-          if (symbol === "EURUSD=X") return;
+      data.forEach(stock => {
+        const symbol = stock.symbol;
+        if (symbol === "EURUSD=X") return;
 
-          const name = stock.shortName || symbol;
-          const price = parseFloat(stock.price);
-          const titles = cardTitles[symbol] || 0;
-          const total = titles * price;
-          const isDollar = dollarStocks.includes(symbol);
-          const currency = isDollar ? "$" : "€";
+        const name = stock.shortName || symbol;
+        const price = parseFloat(stock.price);
+        const titles = cardTitles[symbol] || 0;
+        const total = titles * price;
+        const isDollar = dollarStocks.includes(symbol);
+        const currency = isDollar ? "$" : "€";
 
-          if (isDollar) {
-            totalUSD += total;
-          } else {
-            totalEUR += total;
-          }
+        if (isDollar) {
+          totalUSD += total;
+        } else {
+          totalEUR += total;
+        }
 
-          let dividendInfo = "";
-          if (symbol === "GNL") {
-            const dividendPerShare = 0.76;
-            const dividendTotal = (titles * dividendPerShare).toFixed(2);
-            const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
-            dividendInfo = `
-              <div style="margin-top:8px;">
-                <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
-                <span>📆 <strong>Dividendo:</strong> $0.76 por ano</span><br/>
-                <span>💰 <strong>Dividendos a receber:</strong> $${dividendTotal}</span>
-              </div>
-            `;
-          }
-
-          if (symbol === "EDP.LS") {
-            const dividendPerShare = 0.20;
-            const dividendTotal = (titles * dividendPerShare).toFixed(2);
-            const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
-            dividendInfo = `
-              <div style="margin-top:8px;">
-                <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
-                <span>📆 <strong>Dividendo:</strong> €0.20 por ano</span><br/>
-                <span>💰 <strong>Dividendos a receber:</strong> €${dividendTotal}</span>
-              </div>
-            `;
-          }
-
-          const chartSymbol = tradingViewMap[symbol];
-          const chartBtn = symbol === "EDP.LS"
-            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
-            : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
-
-          const card = document.createElement("div");
-          card.className = "stock-card";
-          card.innerHTML = `
-            <div class="symbol">${name}</div>
-            <div class="price">${currency}${price.toFixed(2)}</div>
-            <div>Títulos: ${titles.toLocaleString()}</div>
-            <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-            ${dividendInfo}
-            ${chartBtn}
+        let dividendInfo = "";
+        if (symbol === "GNL") {
+          const dividendPerShare = 0.76;
+          const dividendTotal = (titles * dividendPerShare).toFixed(2);
+          const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
+          dividendInfo = `
+            <div style="margin-top:8px;">
+              <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
+              <span>📆 <strong>Dividendo:</strong> $0.76 por ano</span><br/>
+              <span>💰 <strong>Dividendos a receber:</strong> $${dividendTotal}</span>
+            </div>
           `;
-          container.appendChild(card);
-        });
+        }
 
-        const convertedUSD = totalUSD * usdToEurRate;
-        const totalFinal = totalEUR + convertedUSD;
+        if (symbol === "EDP.LS") {
+          const dividendPerShare = 0.20;
+          const dividendTotal = (titles * dividendPerShare).toFixed(2);
+          const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
+          dividendInfo = `
+            <div style="margin-top:8px;">
+              <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
+              <span>📆 <strong>Dividendo:</strong> €0.20 por ano</span><br/>
+              <span>💰 <strong>Dividendos a receber:</strong> €${dividendTotal}</span>
+            </div>
+          `;
+        }
 
-        document.getElementById("portfolio-total").innerHTML = `
-          <strong style="font-size: 1.4rem;">💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+        const chartSymbol = tradingViewMap[symbol];
+        const chartBtn = symbol === "EDP.LS"
+          ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
+          : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
+
+        const card = document.createElement("div");
+        card.className = "stock-card";
+        card.innerHTML = `
+          <div class="symbol">${name}</div>
+          <div class="price">${currency}${price.toFixed(2)}</div>
+          <div>Títulos: ${titles.toLocaleString()}</div>
+          <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          ${dividendInfo}
+          ${chartBtn}
         `;
-      } catch (err) {
-        document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
-      }
-    }
+        container.appendChild(card);
+      });
 
-    function loadChart(symbol) {
-      document.getElementById("chart-container").style.display = "block";
-      document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
-      document.getElementById("chart-frame").innerHTML = `
-        <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+      const convertedUSD = totalUSD * usdToEurRate;
+      const totalFinal = totalEUR + convertedUSD;
+
+      document.getElementById("portfolio-total").innerHTML = `
+        <strong style="font-size: 1.4rem;">💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
       `;
+    } catch (err) {
+      document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
     }
+  }
 
-    function toggleTheme() {
-      document.body.classList.toggle("light");
-    }
+  function loadChart(symbol) {
+    document.getElementById("chart-container").style.display = "block";
+    document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
+    document.getElementById("chart-frame").innerHTML = `
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+    `;
+  }
 
-    fetchStocks();
-    setInterval(fetchStocks, 30000);
-  </script>
+  function toggleTheme() {
+    document.body.classList.toggle("light");
+  }
+
+  fetchStocks();
+  setInterval(fetchStocks, 30000);
+</script>
 </body>
 </html>
