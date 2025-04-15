@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Ações</title>
+  <title>ALTA CAPITAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-  background: #111;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 30px;
-}
+      background: #111;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 30px;
+    }
     h1 {
       text-align: center;
       margin-bottom: 20px;
+      font-weight: bold;
     }
     .theme-toggle {
       position: fixed;
@@ -98,11 +99,11 @@
 </head>
 <body>
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-  <h1>📊 Painel de Ações</h1>
+  <h1><strong>ALTA CAPITAL</strong></h1>
 
   <div class="cards-container">
     <div class="stock-card" id="portfolio-card">
-      <div class="symbol">💼 Portfólio Total</div>
+      <div class="symbol"><strong>PORTFOLIO</strong></div>
       <div class="price" id="portfolio-total">A calcular...</div>
     </div>
   </div>
@@ -110,10 +111,10 @@
   <div class="cards-container" id="cards-container"></div>
 
   <div id="chart-container">
-    <h2 id="chart-title">📈 Gráfico</h2>
+    <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 style="text-align:center;">📅 Calendário de Dividendos</h2>
+  <h2 style="text-align:center;">Calendário de Dividendos</h2>
   <div style="overflow-x:auto;">
     <table>
       <thead>
@@ -127,24 +128,24 @@
       <tbody>
         <tr>
           <td>EDP</td>
-          <td></td><td></td><td></td><td></td><td><strong>💶 €95.340</strong></td><td></td>
+          <td></td><td></td><td></td><td></td><td>€95.340</td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td><strong>€95.340</strong></td>
+          <td>€95.340</td>
         </tr>
         <tr>
           <td>GNL</td>
           <td>✅</td><td></td><td></td>
-          <td><strong>💵 $5,339.00</strong></td><td></td><td></td>
-          <td><strong>💵 $5,339.00</strong></td><td></td><td></td>
-          <td><strong>💵 $5,339.00</strong></td><td></td><td></td>
-          <td><strong>$16,017.00</strong></td>
+          <td>$5,339.00</td><td></td><td></td>
+          <td>$5,339.00</td><td></td><td></td>
+          <td>$5,339.00</td><td></td><td></td>
+          <td>$16,017.00</td>
         </tr>
       </tbody>
     </table>
   </div>
 <script>
   const cardTitles = {
-    "EDP.LS": 476700,  // Atualizado!
+    "EDP.LS": 476700,
     "AIQ": 4050,
     "QTUM": 1990,
     "GNL": 28100
@@ -196,9 +197,9 @@
           const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
           dividendInfo = `
             <div style="margin-top:8px;">
-              <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
-              <span>📆 <strong>Dividendo:</strong> $0.76 por ano</span><br/>
-              <span>💰 <strong>Dividendos a receber:</strong> $${dividendTotal}</span>
+              <strong>Dividend Yield:</strong> ${dividendYield}%<br/>
+              <strong>Dividendo:</strong> $0.76/ano<br/>
+              <strong>A receber:</strong> $${dividendTotal}
             </div>
           `;
         }
@@ -209,9 +210,9 @@
           const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
           dividendInfo = `
             <div style="margin-top:8px;">
-              <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
-              <span>📆 <strong>Dividendo:</strong> €0.20 por ano</span><br/>
-              <span>💰 <strong>Dividendos a receber:</strong> €${dividendTotal}</span>
+              <strong>Dividend Yield:</strong> ${dividendYield}%<br/>
+              <strong>Dividendo:</strong> €0.20/ano<br/>
+              <strong>A receber:</strong> €${dividendTotal}
             </div>
           `;
         }
@@ -238,7 +239,7 @@
       const totalFinal = totalEUR + convertedUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.4rem;">💶 TOTAL EM EUROS: €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+        <strong style="font-size: 1.4rem;">€${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
       `;
     } catch (err) {
       document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
@@ -247,7 +248,7 @@
 
   function loadChart(symbol) {
     document.getElementById("chart-container").style.display = "block";
-    document.getElementById("chart-title").innerText = `📈 Gráfico: ${symbol}`;
+    document.getElementById("chart-title").innerText = `Gráfico: ${symbol}`;
     document.getElementById("chart-frame").innerHTML = `
       <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
     `;
