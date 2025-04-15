@@ -199,6 +199,19 @@
             `;
           }
 
+          if (symbol === "EDP.LS") {
+            const dividendPerShare = 0.20;
+            const dividendTotal = (titles * dividendPerShare).toFixed(2);
+            const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
+            dividendInfo = `
+              <div style="margin-top:8px;">
+                <span>💸 <strong>Dividend Yield:</strong> ${dividendYield}%</span><br/>
+                <span>📆 <strong>Dividendo:</strong> €${dividendPerShare} por ano</span><br/>
+                <span>💰 <strong>Dividendos a receber:</strong> €${dividendTotal}</span>
+              </div>
+            `;
+          }
+
           const chartSymbol = tradingViewMap[symbol];
           const chartBtn = symbol === "EDP.LS"
             ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
