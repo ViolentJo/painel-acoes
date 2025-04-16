@@ -105,6 +105,7 @@
     <div class="stock-card" id="portfolio-card">
       <div class="symbol"><strong>PORTFOLIO</strong></div>
       <div class="price" id="portfolio-total">A calcular...</div>
+      <div id="portfolio-capital"></div>
     </div>
   </div>
 
@@ -170,8 +171,11 @@
 
       const container = document.getElementById("cards-container");
       container.innerHTML = "";
+
       let totalEUR = 0;
       let totalUSD = 0;
+      let capitalTotalEUR = 0;
+      let capitalTotalUSD = 0;
 
       data.forEach(stock => {
         const symbol = stock.symbol;
@@ -184,37 +188,21 @@
         const isDollar = dollarStocks.includes(symbol);
         const currency = isDollar ? "$" : "€";
 
-        if (isDollar) {
-          totalUSD += total;
-        } else {
-          totalEUR += total;
-        }
+        let capitalProprio = 0;
 
-        let dividendInfo = "";
-        if (symbol === "GNL") {
-          const dividendPerShare = 0.76;
-          const dividendTotal = (titles * dividendPerShare).toFixed(2);
-          const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
-          dividendInfo = `
-            <div style="margin-top:8px;">
-              <strong>Dividend Yield:</strong> ${dividendYield}%<br/>
-              <strong>Dividendo:</strong> $0.76/ano<br/>
-              <strong>A receber:</strong> $${dividendTotal}
-            </div>
-          `;
-        }
-
+        // Calcular capital próprio por tipo
         if (symbol === "EDP.LS") {
-          const dividendPerShare = 0.20;
-          const dividendTotal = (titles * dividendPerShare).toFixed(2);
-          const dividendYield = price ? ((dividendPerShare / price) * 100).toFixed(2) : "—";
-          dividendInfo = `
-            <div style="margin-top:8px;">
-              <strong>Dividend Yield:</strong> ${dividendYield}%<br/>
-              <strong>Dividendo:</strong> €0.20/ano<br/>
-              <strong>A receber:</strong> €${dividendTotal}
-            </div>
-          `;
+          capitalProprio = total * 0.20;
+          totalEUR += total;
+          capitalTotalEUR += capitalProprio;
+        } else if (symbol === "GNL") {
+          capitalProprio = total * 0.333333;
+          totalUSD += total;
+          capitalTotalUSD += capitalProprio;
+        } else if (symbol === "AIQ" || symbol === "QTUM") {
+          capitalProprio = total * 0.15;
+          totalUSD += total;
+          capitalTotalUSD += capitalProprio;
         }
 
         const chartSymbol = tradingViewMap[symbol];
@@ -229,7 +217,7 @@
           <div class="price">${currency}${price.toFixed(2)}</div>
           <div>Títulos: ${titles.toLocaleString()}</div>
           <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          ${dividendInfo}
+          <div>Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           ${chartBtn}
         `;
         container.appendChild(card);
@@ -238,8 +226,14 @@
       const convertedUSD = totalUSD * usdToEurRate;
       const totalFinal = totalEUR + convertedUSD;
 
+      const capitalTotalFinal = capitalTotalEUR + (capitalTotalUSD * usdToEurRate);
+
       document.getElementById("portfolio-total").innerHTML = `
         <strong style="font-size: 1.4rem;">€${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+      `;
+
+      document.getElementById("portfolio-capital").innerHTML = `
+        Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
       `;
     } catch (err) {
       document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
