@@ -169,6 +169,13 @@
     "GNL": 7.29
   };
 
+  const capitalPercent = {
+    "EDP.LS": 0.20,
+    "AIQ": 0.15,
+    "QTUM": 0.15,
+    "GNL": 0.333333
+  };
+
   const tradingViewMap = {
     "AIQ": "BATS:AIQ",
     "QTUM": "BATS:QTUM",
@@ -202,25 +209,22 @@
         const price = parseFloat(stock.price);
         const titles = cardTitles[symbol] || 0;
         const valorUnit = valorCompra[symbol] || 0;
-        const total = titles * price;
-        const totalCompra = titles * valorUnit;
-        const lucro = total - totalCompra;
+        const totalCompra = valorUnit * titles;
+        const totalAtual = price * titles;
+        const lucro = totalAtual - totalCompra;
+        const capitalPercentual = capitalPercent[symbol] || 0;
         const isDollar = dollarStocks.includes(symbol);
         const currency = isDollar ? "$" : "€";
 
-        let capitalProprio = 0;
-        if (symbol === "EDP.LS") {
-          capitalProprio = total * 0.20;
-          totalEUR += total;
+        const capitalBase = totalCompra * capitalPercentual;
+        const capitalProprio = capitalBase + lucro;
+
+        if (isDollar) {
+          totalUSD += totalAtual;
+          capitalTotalUSD += capitalProprio;
+        } else {
+          totalEUR += totalAtual;
           capitalTotalEUR += capitalProprio;
-        } else if (symbol === "GNL") {
-          capitalProprio = total * 0.333333;
-          totalUSD += total;
-          capitalTotalUSD += capitalProprio;
-        } else if (symbol === "AIQ" || symbol === "QTUM") {
-          capitalProprio = total * 0.15;
-          totalUSD += total;
-          capitalTotalUSD += capitalProprio;
         }
 
         const lucroFormatado = `${currency}${Math.abs(lucro).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
@@ -239,7 +243,7 @@
           <div class="price">${currency}${price.toFixed(2)}</div>
           <div>Títulos: ${titles.toLocaleString()}</div>
           <div>Valor de Compra: ${currency}${valorUnit.toFixed(4)}</div>
-          <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div>Total: ${currency}${totalAtual.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           <div class="profit ${lucroClass}">${lucroTexto}</div>
           <div>Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           ${chartBtn}
@@ -250,7 +254,8 @@
       const convertedUSD = totalUSD * usdToEurRate;
       const totalFinal = totalEUR + convertedUSD;
 
-      const capitalTotalFinal = capitalTotalEUR + (capitalTotalUSD * usdToEurRate);
+      const convertedCapitalUSD = capitalTotalUSD * usdToEurRate;
+      const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
         <strong style="font-size: 1.4rem;">€${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
