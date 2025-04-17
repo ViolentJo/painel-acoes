@@ -95,6 +95,16 @@
       background: #1a1a1a;
       color: #fff;
     }
+    .profit {
+      margin-top: 6px;
+      font-weight: bold;
+    }
+    .profit.positive {
+      color: #4caf50;
+    }
+    .profit.negative {
+      color: #f44336;
+    }
   </style>
 </head>
 <body>
@@ -152,6 +162,13 @@
     "GNL": 28100
   };
 
+  const valorCompra = {
+    "EDP.LS": 2.9610,
+    "AIQ": 37.40,
+    "QTUM": 76.25,
+    "GNL": 7.29
+  };
+
   const tradingViewMap = {
     "AIQ": "BATS:AIQ",
     "QTUM": "BATS:QTUM",
@@ -184,13 +201,14 @@
         const name = stock.shortName || symbol;
         const price = parseFloat(stock.price);
         const titles = cardTitles[symbol] || 0;
+        const valorUnit = valorCompra[symbol] || 0;
         const total = titles * price;
+        const totalCompra = titles * valorUnit;
+        const lucro = total - totalCompra;
         const isDollar = dollarStocks.includes(symbol);
         const currency = isDollar ? "$" : "€";
 
         let capitalProprio = 0;
-
-        // Calcular capital próprio por tipo
         if (symbol === "EDP.LS") {
           capitalProprio = total * 0.20;
           totalEUR += total;
@@ -205,6 +223,10 @@
           capitalTotalUSD += capitalProprio;
         }
 
+        const lucroFormatado = `${currency}${Math.abs(lucro).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+        const lucroClass = lucro >= 0 ? "positive" : "negative";
+        const lucroTexto = lucro >= 0 ? `Lucro Atual: +${lucroFormatado}` : `Lucro Atual: -${lucroFormatado}`;
+
         const chartSymbol = tradingViewMap[symbol];
         const chartBtn = symbol === "EDP.LS"
           ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
@@ -216,7 +238,9 @@
           <div class="symbol">${name}</div>
           <div class="price">${currency}${price.toFixed(2)}</div>
           <div>Títulos: ${titles.toLocaleString()}</div>
+          <div>Valor de Compra: ${currency}${valorUnit.toFixed(4)}</div>
           <div>Total: ${currency}${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          <div class="profit ${lucroClass}">${lucroTexto}</div>
           <div>Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
           ${chartBtn}
         `;
