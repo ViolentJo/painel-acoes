@@ -58,6 +58,7 @@
       padding: 20px;
       width: 300px;
       text-align: center;
+      box-shadow: 0 0 10px #999; /* glow nas bordas */
       transition: transform 0.3s ease;
     }
 
@@ -80,6 +81,7 @@
       font-size: 1.8rem;
       margin-bottom: 10px;
       color: #2196f3;
+      text-shadow: 0 0 6px #2196f3; /* glow azul no preço */
     }
 
     .chart-btn {
@@ -117,7 +119,7 @@
       border-collapse: collapse;
       text-align: center;
       margin-top: 40px;
-      color: #eaeaea;
+      color: #ffffff;
     }
 
     th, td {
@@ -128,7 +130,7 @@
 
     thead {
       background: #161616;
-      color: #cccccc;
+      color: #ffffff; /* letras do calendário a branco */
     }
 
     .profit {
@@ -138,6 +140,7 @@
 
     .profit.positive {
       color: #4caf50;
+      text-shadow: 0 0 6px #4caf50; /* glow verde no lucro */
     }
 
     .profit.negative {
@@ -174,24 +177,24 @@
           <th>Ação</th>
           <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
           <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-          <th style="color:#2196f3;">TOTAL</th>
+          <th style="color:#2196f3; text-shadow:0 0 5px #2196f3;">TOTAL</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="color:#bbb;">EDP</td>
           <td></td><td></td><td></td><td></td>
-          <td style="color:#4caf50;">€95.340</td><td></td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">€95.340</td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td style="color:#4caf50;">€95.340</td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">€95.340</td>
         </tr>
         <tr>
           <td style="color:#bbb;">GNL</td>
           <td>✅</td><td></td><td></td>
-          <td style="color:#4caf50;">$5,339.00</td><td></td><td></td>
-          <td style="color:#4caf50;">$5,339.00</td><td></td><td></td>
-          <td style="color:#4caf50;">$5,339.00</td><td></td><td></td>
-          <td style="color:#4caf50;">$16,017.00</td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">$5,339.00</td><td></td><td></td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">$5,339.00</td><td></td><td></td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">$5,339.00</td><td></td><td></td>
+          <td style="color:#4caf50; text-shadow: 0 0 5px #4caf50;">$16,017.00</td>
         </tr>
       </tbody>
     </table>
@@ -303,7 +306,7 @@
       const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.4rem; color:#2196f3;">
+        <strong style="font-size: 1.4rem; color:#2196f3; text-shadow:0 0 6px #2196f3;">
           €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </strong>
       `;
@@ -331,3 +334,4 @@
 </script>
 </body>
 </html>
+
