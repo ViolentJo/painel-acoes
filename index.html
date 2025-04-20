@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALTA CAPITAL</title>
 
-  <!-- Fonte limpa -->
+  <!-- Fonte moderna e clean -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -13,30 +13,16 @@
       margin: 0;
       padding: 30px;
       font-family: 'Inter', sans-serif;
-      background: #f5f7fa;
-      color: #1a1a1a;
+      background-color: #121212;
+      color: #e0e0e0;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.2rem;
+      margin-bottom: 40px;
       font-weight: 600;
-      color: #1a1a1a;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: transparent;
-      color: #1a1a1a;
-      border: 1px solid #ccc;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      font-size: 2.4rem;
+      color: #ffffff;
     }
 
     .cards-container {
@@ -48,52 +34,51 @@
     }
 
     .stock-card {
-      background: #ffffff;
-      border: 1px solid #ddd;
+      background: #1e1e1e;
+      border: 1px solid #2e2e2e;
       border-radius: 8px;
       padding: 20px;
       width: 280px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
       transition: box-shadow 0.3s ease;
     }
 
     .stock-card:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
     }
 
     #portfolio-card {
-      background-color: #e9f0fb;
-      border-color: #c3d9f6;
+      background-color: #202020;
+      border-color: #333;
     }
 
     .symbol {
       font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 10px;
-      color: #003366;
+      color: #cccccc;
     }
 
     .price {
       font-size: 1.6rem;
       font-weight: 500;
-      color: #0070c0;
+      color: #66ccff;
       margin-bottom: 10px;
     }
 
     .chart-btn {
       display: inline-block;
       margin-top: 12px;
-      padding: 6px 10px;
-      background: #0070c0;
+      padding: 6px 12px;
+      background: #333;
       color: #fff;
-      border: none;
       border-radius: 4px;
       text-decoration: none;
       font-size: 0.9rem;
     }
 
     .chart-btn:hover {
-      background: #005a9c;
+      background: #444;
     }
 
     iframe {
@@ -109,16 +94,17 @@
       border-collapse: collapse;
       text-align: center;
       margin-top: 60px;
-      background: #fff;
+      background: #1a1a1a;
     }
 
     th, td {
       padding: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #333;
     }
 
     thead {
-      background: #f0f2f5;
+      background: #2a2a2a;
+      color: #ccc;
     }
 
     .profit {
@@ -127,16 +113,15 @@
     }
 
     .profit.positive {
-      color: #0f8b4b;
+      color: #3ddc84;
     }
 
     .profit.negative {
-      color: #c62828;
+      color: #e53935;
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
   <h1>ALTA CAPITAL</h1>
 
   <div class="cards-container">
@@ -150,10 +135,10 @@
   <div class="cards-container" id="cards-container"></div>
 
   <div id="chart-container">
-    <h2 id="chart-title" style="text-align:center; margin-top:40px; font-size:1.4rem; color:#333;"></h2>
+    <h2 id="chart-title" style="text-align:center; margin-top:40px; font-size:1.4rem; color:#ccc;"></h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 style="text-align:center; margin-top: 80px; font-size: 1.6rem; color: #1a1a1a;">
+  <h2 style="text-align:center; margin-top: 80px; font-size: 1.6rem; color: #ccc;">
     Calendário de Dividendos
   </h2>
 
@@ -171,17 +156,17 @@
         <tr>
           <td>EDP</td>
           <td></td><td></td><td></td><td></td>
-          <td><strong>€95.340</strong></td><td></td>
+          <td><strong style="color:#66ccff;">€95.340</strong></td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td><strong>€95.340</strong></td>
+          <td><strong style="color:#66ccff;">€95.340</strong></td>
         </tr>
         <tr>
           <td>GNL</td>
           <td>✅</td><td></td><td></td>
-          <td><strong>$5,339.00</strong></td><td></td><td></td>
-          <td><strong>$5,339.00</strong></td><td></td><td></td>
-          <td><strong>$5,339.00</strong></td><td></td><td></td>
-          <td><strong>$16,017.00</strong></td>
+          <td><strong style="color:#66ccff;">$5,339.00</strong></td><td></td><td></td>
+          <td><strong style="color:#66ccff;">$5,339.00</strong></td><td></td><td></td>
+          <td><strong style="color:#66ccff;">$5,339.00</strong></td><td></td><td></td>
+          <td><strong style="color:#66ccff;">$16,017.00</strong></td>
         </tr>
       </tbody>
     </table>
@@ -288,13 +273,13 @@
       const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.3rem;">
+        <strong style="font-size: 1.3rem; color:#66ccff;">
           €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </strong>
       `;
 
       document.getElementById("portfolio-capital").innerHTML = `
-        <div style="margin-top:10px; font-size: 0.95rem; color:#333;">
+        <div style="margin-top:10px; font-size: 0.95rem; color:#ccc;">
           Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </div>
       `;
@@ -307,12 +292,8 @@
     document.getElementById("chart-container").style.display = "block";
     document.getElementById("chart-title").innerText = `Gráfico: ${symbol}`;
     document.getElementById("chart-frame").innerHTML = `
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=light&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
     `;
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("light");
   }
 
   fetchStocks();
