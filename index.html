@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALTA CAPITAL</title>
 
-  <!-- Fonte Inter -->
+  <!-- Fonte limpa -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -13,112 +13,87 @@
       margin: 0;
       padding: 30px;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #e0e0e0;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      background: #f5f7fa;
+      color: #1a1a1a;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 40px;
-      font-weight: 700;
-      font-size: 2.5rem;
-      color: #00fff7;
-      text-shadow: 0 0 10px #00fff7;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #1a1a1a;
     }
 
     .theme-toggle {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #111;
-      color: #00fff7;
-      border: 2px solid #00fff7;
-      padding: 8px 14px;
-      border-radius: 20px;
+      background: transparent;
+      color: #1a1a1a;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      transition: all 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-      background: #00fff7;
-      color: #111;
+      font-size: 0.9rem;
     }
 
     .cards-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 24px;
       justify-content: center;
+      margin-bottom: 40px;
     }
 
     .stock-card {
-      background: rgba(0, 0, 0, 0.6);
-      border: 2px solid #00fff7;
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
       padding: 20px;
-      width: 300px;
-      text-align: center;
-      box-shadow: 0 0 15px #00fff7;
-      transition: transform 0.3s ease;
+      width: 280px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s ease;
     }
 
     .stock-card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #00fff7;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     #portfolio-card {
-      margin-bottom: 30px;
-      border-color: #ccc;
-      box-shadow: 0 0 15px #ccc;
+      background-color: #e9f0fb;
+      border-color: #c3d9f6;
     }
 
     .symbol {
-      font-size: 1.3rem;
-      font-weight: 700;
+      font-size: 1.1rem;
+      font-weight: 600;
       margin-bottom: 10px;
-      color: #ffffff;
+      color: #003366;
     }
 
     .price {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: #0070c0;
       margin-bottom: 10px;
-      color: #00fff7;
-      text-shadow: 0 0 6px #00fff7;
     }
 
     .chart-btn {
-      background: #ccc;
-      color: #111;
-      padding: 8px 12px;
-      text-decoration: none;
-      border-radius: 4px;
       display: inline-block;
+      margin-top: 12px;
+      padding: 6px 10px;
+      background: #0070c0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
       font-size: 0.9rem;
-      margin-top: 10px;
-      transition: all 0.3s ease;
     }
 
     .chart-btn:hover {
-      background: #fff;
-      color: #333;
-      box-shadow: 0 0 10px #ccc;
-    }
-
-    #chart-container {
-      max-width: 900px;
-      margin: 40px auto 0;
-      text-align: center;
-      display: none;
+      background: #005a9c;
     }
 
     iframe {
@@ -126,49 +101,47 @@
       height: 500px;
       border: none;
       border-radius: 6px;
-      box-shadow: 0 0 20px #00fff7;
+      margin-top: 40px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: center;
-      margin-top: 50px;
-      color: #fff;
+      margin-top: 60px;
+      background: #fff;
     }
 
     th, td {
-      border: 1px solid #444;
       padding: 10px;
-      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid #ddd;
     }
 
     thead {
-      background: #1a1a1a;
-      color: #0ff;
+      background: #f0f2f5;
     }
 
     .profit {
-      font-weight: bold;
+      font-weight: 500;
       margin-top: 6px;
     }
 
     .profit.positive {
-      color: #00ff88;
+      color: #0f8b4b;
     }
 
     .profit.negative {
-      color: #ff4444;
+      color: #c62828;
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-  <h1><strong>ALTA CAPITAL</strong></h1>
+  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
+  <h1>ALTA CAPITAL</h1>
 
   <div class="cards-container">
     <div class="stock-card" id="portfolio-card">
-      <div class="symbol"><strong>PORTFOLIO</strong></div>
+      <div class="symbol">PORTFÓLIO</div>
       <div class="price" id="portfolio-total">A calcular...</div>
       <div id="portfolio-capital"></div>
     </div>
@@ -177,10 +150,10 @@
   <div class="cards-container" id="cards-container"></div>
 
   <div id="chart-container">
-    <h2 id="chart-title">Gráfico</h2>
+    <h2 id="chart-title" style="text-align:center; margin-top:40px; font-size:1.4rem; color:#333;"></h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 style="text-align:center; margin-top: 80px; color:#ccc; text-shadow:0 0 4px #999;">
+  <h2 style="text-align:center; margin-top: 80px; font-size: 1.6rem; color: #1a1a1a;">
     Calendário de Dividendos
   </h2>
 
@@ -191,24 +164,24 @@
           <th>Ação</th>
           <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
           <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-          <th style="color:#00fff7;">TOTAL</th>
+          <th>Total</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style="color:#0ff;">EDP</td>
+          <td>EDP</td>
           <td></td><td></td><td></td><td></td>
-          <td style="color:#0f0;">€95.340</td><td></td>
+          <td><strong>€95.340</strong></td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td style="color:#0f0;">€95.340</td>
+          <td><strong>€95.340</strong></td>
         </tr>
         <tr>
-          <td style="color:#0ff;">GNL</td>
+          <td>GNL</td>
           <td>✅</td><td></td><td></td>
-          <td style="color:#0f0;">$5,339.00</td><td></td><td></td>
-          <td style="color:#0f0;">$5,339.00</td><td></td><td></td>
-          <td style="color:#0f0;">$5,339.00</td><td></td><td></td>
-          <td style="color:#0f0;">$16,017.00</td>
+          <td><strong>$5,339.00</strong></td><td></td><td></td>
+          <td><strong>$5,339.00</strong></td><td></td><td></td>
+          <td><strong>$5,339.00</strong></td><td></td><td></td>
+          <td><strong>$16,017.00</strong></td>
         </tr>
       </tbody>
     </table>
@@ -315,13 +288,13 @@
       const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.4rem; color:#00fff7; text-shadow:0 0 10px #00fff7;">
+        <strong style="font-size: 1.3rem;">
           €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </strong>
       `;
 
       document.getElementById("portfolio-capital").innerHTML = `
-        <div style="margin-top:10px; color:#ccc; text-shadow:0 0 8px #bbb;">
+        <div style="margin-top:10px; font-size: 0.95rem; color:#333;">
           Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </div>
       `;
@@ -334,7 +307,7 @@
     document.getElementById("chart-container").style.display = "block";
     document.getElementById("chart-title").innerText = `Gráfico: ${symbol}`;
     document.getElementById("chart-frame").innerHTML = `
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
+      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=light&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
     `;
   }
 
