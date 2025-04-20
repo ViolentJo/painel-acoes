@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALTA CAPITAL</title>
 
-  <!-- Fonte restaurada -->
+  <!-- Fonte Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -78,8 +78,8 @@
 
     #portfolio-card {
       margin-bottom: 30px;
-      border-color: #ff00ff;
-      box-shadow: 0 0 15px #ff00ff;
+      border-color: #ccc;
+      box-shadow: 0 0 15px #ccc;
     }
 
     .symbol {
@@ -97,8 +97,8 @@
     }
 
     .chart-btn {
-      background: #ff00ff;
-      color: #fff;
+      background: #ccc;
+      color: #111;
       padding: 8px 12px;
       text-decoration: none;
       border-radius: 4px;
@@ -110,8 +110,8 @@
 
     .chart-btn:hover {
       background: #fff;
-      color: #ff00ff;
-      box-shadow: 0 0 10px #ff00ff;
+      color: #333;
+      box-shadow: 0 0 10px #ccc;
     }
 
     #chart-container {
@@ -180,7 +180,10 @@
     <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 style="text-align:center; color:#ff00ff; text-shadow:0 0 6px #ff00ff;">Calendário de Dividendos</h2>
+  <h2 style="text-align:center; margin-top: 80px; color:#ccc; text-shadow:0 0 4px #999;">
+    Calendário de Dividendos
+  </h2>
+
   <div style="overflow-x:auto;">
     <table>
       <thead>
@@ -194,7 +197,8 @@
       <tbody>
         <tr>
           <td style="color:#0ff;">EDP</td>
-          <td></td><td></td><td></td><td></td><td style="color:#0f0;">€95.340</td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td style="color:#0f0;">€95.340</td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
           <td style="color:#0f0;">€95.340</td>
         </tr>
@@ -317,7 +321,7 @@
       `;
 
       document.getElementById("portfolio-capital").innerHTML = `
-        <div style="margin-top:10px; color:#ff00ff; text-shadow:0 0 10px #ff00ff;">
+        <div style="margin-top:10px; color:#ccc; text-shadow:0 0 8px #bbb;">
           Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </div>
       `;
