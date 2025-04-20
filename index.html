@@ -31,7 +31,6 @@
       font-weight: 700;
       font-size: 2.5rem;
       color: #00fff7;
-      text-shadow: 0 0 10px #00fff7;
     }
 
     .theme-toggle {
@@ -67,19 +66,16 @@
       padding: 20px;
       width: 300px;
       text-align: center;
-      box-shadow: 0 0 15px #00fff7;
       transition: transform 0.3s ease;
     }
 
     .stock-card:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 25px #00fff7;
     }
 
     #portfolio-card {
       margin-bottom: 30px;
       border-color: #ccc;
-      box-shadow: 0 0 15px #ccc;
     }
 
     .symbol {
@@ -93,7 +89,6 @@
       font-size: 1.8rem;
       margin-bottom: 10px;
       color: #00fff7;
-      text-shadow: 0 0 6px #00fff7;
     }
 
     .chart-btn {
@@ -111,7 +106,6 @@
     .chart-btn:hover {
       background: #fff;
       color: #333;
-      box-shadow: 0 0 10px #ccc;
     }
 
     #chart-container {
@@ -126,7 +120,6 @@
       height: 500px;
       border: none;
       border-radius: 6px;
-      box-shadow: 0 0 20px #00fff7;
     }
 
     table {
@@ -180,7 +173,7 @@
     <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 style="text-align:center; margin-top: 80px; color:#ccc; text-shadow:0 0 4px #999;">
+  <h2 style="text-align:center; margin-top: 80px; color:#ccc;">
     Calendário de Dividendos
   </h2>
 
@@ -213,7 +206,12 @@
       </tbody>
     </table>
   </div>
+
 <script>
+  function toggleTheme() {
+    document.body.classList.toggle("light");
+  }
+
   const cardTitles = {
     "EDP.LS": 476700,
     "AIQ": 4050,
@@ -315,13 +313,13 @@
       const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
 
       document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.4rem; color:#00fff7; text-shadow:0 0 10px #00fff7;">
+        <strong style="font-size: 1.4rem; color:#00fff7;">
           €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </strong>
       `;
 
       document.getElementById("portfolio-capital").innerHTML = `
-        <div style="margin-top:10px; color:#ccc; text-shadow:0 0 8px #bbb;">
+        <div style="margin-top:10px; color:#ccc;">
           Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
         </div>
       `;
@@ -336,10 +334,6 @@
     document.getElementById("chart-frame").innerHTML = `
       <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
     `;
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("light");
   }
 
   fetchStocks();
