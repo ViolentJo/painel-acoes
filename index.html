@@ -49,6 +49,7 @@
       flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
+      margin-bottom: 40px;
     }
 
     .stock-card {
@@ -100,11 +101,27 @@
       background: #3d3d3d;
     }
 
-    #chart-container {
-      max-width: 900px;
-      margin: 40px auto 0;
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 600;
       text-align: center;
-      display: none;
+      margin-top: 60px;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .profit {
+      font-weight: bold;
+      margin-top: 6px;
+    }
+
+    .profit.positive {
+      color: #66bb6a;
+      text-shadow: 0 0 6px #66bb6a;
+    }
+
+    .profit.negative {
+      color: #f44336;
     }
 
     iframe {
@@ -133,18 +150,11 @@
       color: #ffffff;
     }
 
-    .profit {
-      font-weight: bold;
-      margin-top: 6px;
-    }
-
-    .profit.positive {
-      color: #66bb6a;
-      text-shadow: 0 0 6px #66bb6a;
-    }
-
-    .profit.negative {
-      color: #f44336;
+    #chart-container {
+      max-width: 900px;
+      margin: 40px auto 0;
+      text-align: center;
+      display: none;
     }
   </style>
 </head>
@@ -166,6 +176,12 @@
     <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
+  <h2 class="section-title">Ações em Análise</h2>
+
+  <div class="cards-container" id="analise-container">
+    <!-- Estes cards vão ser gerados dinamicamente -->
+  </div>
+
   <h2 style="text-align:center; margin-top: 80px; color:#ffffff;">
     Calendário de Dividendos
   </h2>
@@ -199,7 +215,6 @@
       </tbody>
     </table>
   </div>
-
 <script>
   function toggleTheme() {
     document.body.classList.toggle("light");
@@ -226,6 +241,27 @@
     "GNL": 0.333333
   };
 
+  const dividendAnual = {
+    "EDP.LS": 0.20,
+    "GNL": 0.76
+  };
+
+  const dividendAnalise = {
+    "ENEL.MI": 0.43,
+    "ISP.MI": 0.28,
+    "NOS.LS": 0.29,
+    "ORA.PA": 0.72,
+    "VOD.L": 0.10
+  };
+
+  const nomeAnalise = {
+    "ENEL.MI": "ENEL SpA",
+    "ISP.MI": "Intesa Sanpaolo",
+    "NOS.LS": "NOS SGPS",
+    "ORA.PA": "Orange",
+    "VOD.L": "Vodafone"
+  };
+
   const tradingViewMap = {
     "AIQ": "BATS:AIQ",
     "QTUM": "BATS:QTUM",
@@ -244,7 +280,9 @@
       const usdToEurRate = eurUsd ? 1 / eurUsd : 0.92;
 
       const container = document.getElementById("cards-container");
+      const analiseContainer = document.getElementById("analise-container");
       container.innerHTML = "";
+      analiseContainer.innerHTML = "";
 
       let totalEUR = 0;
       let totalUSD = 0;
@@ -257,46 +295,71 @@
 
         const name = stock.shortName || symbol;
         const price = parseFloat(stock.price);
-        const titles = cardTitles[symbol] || 0;
-        const valorUnit = valorCompra[symbol] || 0;
-        const totalCompra = valorUnit * titles;
-        const totalAtual = price * titles;
-        const lucro = totalAtual - totalCompra;
-        const capitalBase = totalCompra * (capitalPercent[symbol] || 0);
-        const capitalProprio = capitalBase + lucro;
-        const isDollar = dollarStocks.includes(symbol);
-        const currency = isDollar ? "$" : "€";
 
-        const lucroFormatado = `${currency}${Math.abs(lucro).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-        const lucroClass = lucro >= 0 ? "positive" : "negative";
-        const lucroTexto = lucro >= 0 ? `Lucro Atual: +${lucroFormatado}` : `Lucro Atual: -${lucroFormatado}`;
+        if (cardTitles[symbol]) {
+          const titles = cardTitles[symbol];
+          const valorUnit = valorCompra[symbol];
+          const totalCompra = valorUnit * titles;
+          const totalAtual = price * titles;
+          const lucro = totalAtual - totalCompra;
+          const capitalBase = totalCompra * (capitalPercent[symbol] || 0);
+          const capitalProprio = capitalBase + lucro;
+          const isDollar = dollarStocks.includes(symbol);
+          const currency = isDollar ? "$" : "€";
 
-        if (isDollar) {
-          totalUSD += totalAtual;
-          capitalTotalUSD += capitalProprio;
-        } else {
-          totalEUR += totalAtual;
-          capitalTotalEUR += capitalProprio;
+          const lucroFormatado = `${currency}${Math.abs(lucro).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+          const lucroClass = lucro >= 0 ? "positive" : "negative";
+          const lucroTexto = lucro >= 0 ? `Lucro Atual: +${lucroFormatado}` : `Lucro Atual: -${lucroFormatado}`;
+
+          if (isDollar) {
+            totalUSD += totalAtual;
+            capitalTotalUSD += capitalProprio;
+          } else {
+            totalEUR += totalAtual;
+            capitalTotalEUR += capitalProprio;
+          }
+
+          // Calcular dividend yield se aplicável
+          let yieldLine = '';
+          if (dividendAnual[symbol]) {
+            const yieldValue = (dividendAnual[symbol] / price * 100).toFixed(2);
+            yieldLine = `<div style="margin-top:6px;">Dividend Yield Anual: ${yieldValue}%</div>`;
+          }
+
+          const chartSymbol = tradingViewMap[symbol];
+          const chartBtn = symbol === "EDP.LS"
+            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
+            : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
+
+          const card = document.createElement("div");
+          card.className = "stock-card";
+          card.innerHTML = `
+            <div class="symbol">${name}</div>
+            <div class="price">${currency}${price.toFixed(2)}</div>
+            <div>Títulos: ${titles.toLocaleString()}</div>
+            <div>Valor de Compra: ${currency}${valorUnit.toFixed(4)}</div>
+            <div>Total: ${currency}${totalAtual.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div class="profit ${lucroClass}">${lucroTexto}</div>
+            <div style="margin-top:8px;">Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            ${yieldLine}
+            ${chartBtn}
+          `;
+          container.appendChild(card);
         }
 
-        const chartSymbol = tradingViewMap[symbol];
-        const chartBtn = symbol === "EDP.LS"
-          ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
-          : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
-
-        const card = document.createElement("div");
-        card.className = "stock-card";
-        card.innerHTML = `
-          <div class="symbol">${name}</div>
-          <div class="price">${currency}${price.toFixed(2)}</div>
-          <div>Títulos: ${titles.toLocaleString()}</div>
-          <div>Valor de Compra: ${currency}${valorUnit.toFixed(4)}</div>
-          <div>Total: ${currency}${totalAtual.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          <div class="profit ${lucroClass}">${lucroTexto}</div>
-          <div style="margin-top:8px;">Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-          ${chartBtn}
-        `;
-        container.appendChild(card);
+        // Secção de Análise
+        if (dividendAnalise[symbol]) {
+          const annual = dividendAnalise[symbol];
+          const yieldPercent = ((annual / price) * 100).toFixed(2);
+          const card = document.createElement("div");
+          card.className = "stock-card";
+          card.innerHTML = `
+            <div class="symbol">${nomeAnalise[symbol] || symbol}</div>
+            <div class="price">€${price.toFixed(2)}</div>
+            <div style="margin-top:8px;">Dividend Yield: ${yieldPercent}%</div>
+          `;
+          analiseContainer.appendChild(card);
+        }
       });
 
       const convertedUSD = totalUSD * usdToEurRate;
