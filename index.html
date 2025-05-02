@@ -6,7 +6,7 @@
   <title>ALTA CAPITAL</title>
 
   <!-- Fonte Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 
   <style>
     body {
@@ -54,12 +54,12 @@
 
     .stock-card {
       background: #161616;
-      border: 1px solid #333;
+      border: 1px solid #999;
       border-radius: 12px;
       padding: 20px;
       width: 300px;
       text-align: center;
-      box-shadow: 0 0 10px #999;
+      box-shadow: 0 0 10px #555;
       transition: transform 0.3s ease;
     }
 
@@ -105,7 +105,7 @@
       font-size: 1.6rem;
       font-weight: 600;
       text-align: center;
-      margin-top: 60px;
+      margin-top: 80px;
       margin-bottom: 20px;
       color: #ffffff;
     }
@@ -176,216 +176,6 @@
     <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 class="section-title">Calendário de Dividendos</h2>
-
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Ação</th>
-          <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
-          <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-          <th style="color:#42a5f5;">TOTAL</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="color:#ccc;">EDP</td>
-          <td></td><td></td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">€68.644,80</td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">€68.644,80</td>
-        </tr>
-        <tr>
-          <td style="color:#ccc;">GNL</td>
-          <td>✅</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$9,129.69</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-<script>
-  function toggleTheme() {
-    document.body.classList.toggle("light");
-  }
-
-  const cardTitles = {
-    "EDP.LS": 476700,
-    "AIQ": 4050,
-    "QTUM": 1990,
-    "GNL": 28100
-  };
-
-  const valorCompra = {
-    "EDP.LS": 2.9610,
-    "AIQ": 37.40,
-    "QTUM": 76.25,
-    "GNL": 7.29
-  };
-
-  const capitalPercent = {
-    "EDP.LS": 0.20,
-    "AIQ": 0.15,
-    "QTUM": 0.15,
-    "GNL": 0.333333
-  };
-
-  const dividendAnual = {
-    "EDP.LS": 0.20,
-    "GNL": 0.76
-  };
-
-  const dividendAnalise = {
-    "ENEL.MI": 0.43,
-    "ISP.MI": 0.28,
-    "NOS.LS": 0.29,
-    "ORA.PA": 0.72
-  };
-
-  const nomeAnalise = {
-    "ENEL.MI": "ENEL SpA",
-    "ISP.MI": "Intesa Sanpaolo",
-    "NOS.LS": "NOS SGPS",
-    "ORA.PA": "Orange"
-  };
-
-  const tradingViewMap = {
-    "AIQ": "BATS:AIQ",
-    "QTUM": "BATS:QTUM",
-    "GNL": "NYSE:GNL",
-    "EDP.LS": "EURONEXT-EDP"
-  };
-
-  const dollarStocks = ["AIQ", "QTUM", "GNL"];
-
-  async function fetchStocks() {
-    try {
-      const res = await fetch("https://yahoo-finance-api-vercel.vercel.app/api/stocks");
-      const data = await res.json();
-
-      const eurUsd = data.find(s => s.symbol === "EURUSD=X")?.price;
-      const usdToEurRate = eurUsd ? 1 / eurUsd : 0.92;
-
-      const container = document.getElementById("cards-container");
-      const analiseContainer = document.getElementById("analise-container");
-      if (analiseContainer) analiseContainer.innerHTML = "";
-
-      container.innerHTML = "";
-
-      let totalEUR = 0;
-      let totalUSD = 0;
-      let capitalTotalEUR = 0;
-      let capitalTotalUSD = 0;
-
-      data.forEach(stock => {
-        const symbol = stock.symbol;
-        if (symbol === "EURUSD=X") return;
-
-        const name = stock.shortName || symbol;
-        const price = parseFloat(stock.price);
-
-        if (cardTitles[symbol]) {
-          const titles = cardTitles[symbol];
-          const valorUnit = valorCompra[symbol];
-          const totalCompra = valorUnit * titles;
-          const totalAtual = price * titles;
-          const lucro = totalAtual - totalCompra;
-          const capitalBase = totalCompra * (capitalPercent[symbol] || 0);
-          const capitalProprio = capitalBase + lucro;
-          const isDollar = dollarStocks.includes(symbol);
-          const currency = isDollar ? "$" : "€";
-
-          const lucroFormatado = `${currency}${Math.abs(lucro).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-          const lucroClass = lucro >= 0 ? "positive" : "negative";
-          const lucroTexto = lucro >= 0 ? `Lucro Atual: +${lucroFormatado}` : `Lucro Atual: -${lucroFormatado}`;
-
-          if (isDollar) {
-            totalUSD += totalAtual;
-            capitalTotalUSD += capitalProprio;
-          } else {
-            totalEUR += totalAtual;
-            capitalTotalEUR += capitalProprio;
-          }
-
-          let yieldLine = '';
-          if (dividendAnual[symbol]) {
-            const yieldValue = (dividendAnual[symbol] / price * 100).toFixed(2);
-            yieldLine = `<div style="margin-top:6px;">Dividend Yield Anual: ${yieldValue}%</div>`;
-          }
-
-          const chartSymbol = tradingViewMap[symbol];
-          const chartBtn = symbol === "EDP.LS"
-            ? `<a class="chart-btn" href="https://www.tradingview.com/symbols/${chartSymbol}/" target="_blank">Ver gráfico</a>`
-            : `<a class="chart-btn" href="#" onclick="loadChart('${chartSymbol}'); return false;">Ver gráfico</a>`;
-
-          const card = document.createElement("div");
-          card.className = "stock-card";
-          card.innerHTML = `
-            <div class="symbol">${name}</div>
-            <div class="price">${currency}${price.toFixed(2)}</div>
-            <div>Títulos: ${titles.toLocaleString()}</div>
-            <div>Valor de Compra: ${currency}${valorUnit.toFixed(4)}</div>
-            <div>Total: ${currency}${totalAtual.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-            <div class="profit ${lucroClass}">${lucroTexto}</div>
-            <div style="margin-top:8px;">Capital Próprio: ${currency}${capitalProprio.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-            ${yieldLine}
-            ${chartBtn}
-          `;
-          container.appendChild(card);
-        }
-
-        if (dividendAnalise[symbol]) {
-          const annual = dividendAnalise[symbol];
-          const yieldPercent = ((annual / price) * 100).toFixed(2);
-          const card = document.createElement("div");
-          card.className = "stock-card";
-          card.innerHTML = `
-            <div class="symbol">${nomeAnalise[symbol] || symbol}</div>
-            <div class="price">€${price.toFixed(2)}</div>
-            <div style="margin-top:8px;">Dividend Yield: ${yieldPercent}%</div>
-          `;
-          analiseContainer.appendChild(card);
-        }
-      });
-
-      const convertedUSD = totalUSD * usdToEurRate;
-      const totalFinal = totalEUR + convertedUSD;
-
-      const convertedCapitalUSD = capitalTotalUSD * usdToEurRate;
-      const capitalTotalFinal = capitalTotalEUR + convertedCapitalUSD;
-
-      document.getElementById("portfolio-total").innerHTML = `
-        <strong style="font-size: 1.4rem; color:#42a5f5; text-shadow:0 0 6px #42a5f5;">
-          €${totalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-        </strong>
-      `;
-
-      document.getElementById("portfolio-capital").innerHTML = `
-        <div style="margin-top:10px; color:#b0b0b0;">
-          Capital Próprio: €${capitalTotalFinal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-        </div>
-      `;
-    } catch (err) {
-      document.getElementById("cards-container").innerHTML = `<p>Erro ao carregar dados.</p>`;
-    }
-  }
-
-  function loadChart(symbol) {
-    document.getElementById("chart-container").style.display = "block";
-    document.getElementById("chart-title").innerText = `Gráfico: ${symbol}`;
-    document.getElementById("chart-frame").innerHTML = `
-      <iframe src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&timezone=Europe/Lisbon&hideideas=1"></iframe>
-    `;
-  }
-
-  fetchStocks();
-  setInterval(fetchStocks, 30000);
-</script>
-</body>
-</html>
   <h2 class="section-title">Calendário de Dividendos</h2>
 
   <div style="overflow-x:auto;">
@@ -599,4 +389,3 @@
 </script>
 </body>
 </html>
-
