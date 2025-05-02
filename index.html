@@ -176,15 +176,7 @@
     <h2 id="chart-title">Gráfico</h2>
     <div id="chart-frame"></div>
   </div>
-  <h2 class="section-title">Ações em Análise</h2>
-
-  <div class="cards-container" id="analise-container">
-    <!-- Estes cards vão ser gerados dinamicamente -->
-  </div>
-
-  <h2 style="text-align:center; margin-top: 80px; color:#ffffff;">
-    Calendário de Dividendos
-  </h2>
+  <h2 class="section-title">Calendário de Dividendos</h2>
 
   <div style="overflow-x:auto;">
     <table>
@@ -193,24 +185,24 @@
           <th>Ação</th>
           <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
           <th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th>
-          <th style="color:#42a5f5; text-shadow:0 0 5px #42a5f5;">TOTAL</th>
+          <th style="color:#42a5f5;">TOTAL</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="color:#ccc;">EDP</td>
           <td></td><td></td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">€95.340</td><td></td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">€68.644,80</td><td></td>
           <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">€95.340</td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">€68.644,80</td>
         </tr>
         <tr>
           <td style="color:#ccc;">GNL</td>
           <td>✅</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">$5,339.00</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">$5,339.00</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">$5,339.00</td><td></td><td></td>
-          <td style="color:#66bb6a; text-shadow:0 0 5px #66bb6a;">$16,017.00</td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$3,043.23</td><td></td><td></td>
+          <td style="color:#66bb6a; text-shadow:0 0 6px #66bb6a;">$9,129.69</td>
         </tr>
       </tbody>
     </table>
@@ -250,16 +242,14 @@
     "ENEL.MI": 0.43,
     "ISP.MI": 0.28,
     "NOS.LS": 0.29,
-    "ORA.PA": 0.72,
-    "VOD.L": 0.10
+    "ORA.PA": 0.72
   };
 
   const nomeAnalise = {
     "ENEL.MI": "ENEL SpA",
     "ISP.MI": "Intesa Sanpaolo",
     "NOS.LS": "NOS SGPS",
-    "ORA.PA": "Orange",
-    "VOD.L": "Vodafone"
+    "ORA.PA": "Orange"
   };
 
   const tradingViewMap = {
@@ -273,7 +263,7 @@
 
   async function fetchStocks() {
     try {
-      const res = await fetch("https://yahoo-finance-api-1.onrender.com/api/stocks");
+      const res = await fetch("https://yahoo-finance-api-vercel.vercel.app/api/stocks");
       const data = await res.json();
 
       const eurUsd = data.find(s => s.symbol === "EURUSD=X")?.price;
@@ -281,8 +271,9 @@
 
       const container = document.getElementById("cards-container");
       const analiseContainer = document.getElementById("analise-container");
+      if (analiseContainer) analiseContainer.innerHTML = "";
+
       container.innerHTML = "";
-      analiseContainer.innerHTML = "";
 
       let totalEUR = 0;
       let totalUSD = 0;
@@ -319,7 +310,6 @@
             capitalTotalEUR += capitalProprio;
           }
 
-          // Calcular dividend yield se aplicável
           let yieldLine = '';
           if (dividendAnual[symbol]) {
             const yieldValue = (dividendAnual[symbol] / price * 100).toFixed(2);
@@ -347,7 +337,6 @@
           container.appendChild(card);
         }
 
-        // Secção de Análise
         if (dividendAnalise[symbol]) {
           const annual = dividendAnalise[symbol];
           const yieldPercent = ((annual / price) * 100).toFixed(2);
@@ -397,3 +386,4 @@
 </script>
 </body>
 </html>
+
